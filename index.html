@@ -1,0 +1,4203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Board Game IPA</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background:black;
+}
+
+#game{
+    width:1280px;
+    height:720px;
+    position:absolute;
+    transform-origin:top left;
+}
+
+/* Semua halaman */
+.halaman{
+    width:100%;
+    height:100%;
+    display:none;
+    position:absolute;
+    top:0;
+    left:0;
+}
+
+/* Cover tampil pertama */
+#cover{
+    display:block;
+}
+
+/* Gambar halaman */
+.halaman img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+/* Tombol */
+button{
+    position:absolute;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+<!-- COVER -->
+<div id="cover" class="halaman">
+    <img src="cover.png">
+
+    <!-- MASUK KELAS -->
+    <button
+    style="width:200px;height:50px;top:53%;left:50%;transform:translateX(-50%);"
+    onclick="buka('masukkelas')">
+    </button>
+
+    <!-- GURU MEMBUAT ROOM -->
+    <button
+    onclick="buka('panel_guru')"
+    style="width:200px;height:50px;top:63%;left:50%;transform:translateX(-50%);">
+    </button>
+
+    <!-- PETUNJUK PENGGUNAAN-->
+    <button
+    style="width:200px;height:50px;top:73%;left:50%;transform:translateX(-50%);"
+    onclick="buka('petunjuk_penggunaan')">
+    </button>
+</div>
+
+
+<!-- MASUK KELAS -->
+<div id="masukkelas" class="halaman">
+
+    <img src="masukkelas.png">
+
+    <textarea
+        id="anggotaKelompok"
+        placeholder="Masukkan nama anggota (satu nama setiap baris)"
+        style="
+            position:absolute;
+            top:220px;
+            left:480px;
+            width:300px;
+            height:50px;
+            border:none;
+            outline:none;
+            font-size:16px;
+            resize:none;
+            padding:10px;
+            border-radius:8px;
+        "
+    ></textarea>
+
+    <!-- TEKS KODE KELAS -->
+    <div
+        style="
+            position:absolute;
+            top:270px;
+            left:669px;
+            font-size:13px;
+            font-weight:bold;
+            background:green;
+            z-index:9999;
+        "
+    >
+        Masukkan Kode Kelas
+    </div>
+
+    <!-- INPUT KODE KELAS -->
+    <input
+        type="text"
+        id="kodeKelas"
+        placeholder="Masukkan kode kelas"
+        style="
+            position:absolute;
+            top:283px;
+            left:669px;
+            width:125px;
+            height:20px;
+            border:none;
+            outline:none;
+            font-size:15px;
+            background:white;
+            padding-left:10px;
+            border-radius:8px;
+            z-index:9999;
+        "
+    >
+
+    <!-- Kelompok 1 -->
+    <input
+        type="radio"
+        name="kelompok"
+        value="1"
+        style="
+            position:absolute;
+            top:311px;
+            left:494px;
+            width:34px;
+            height:34px;
+        "
+    >
+
+    <!-- Kelompok 2 -->
+    <input
+        type="radio"
+        name="kelompok"
+        value="2"
+        style="
+            position:absolute;
+            top:351px;
+            left:494px;
+            width:34px;
+            height:34px;
+        "
+    >
+
+    <!-- Kelompok 3 -->
+    <input
+        type="radio"
+        name="kelompok"
+        value="3"
+        style="
+            position:absolute;
+            top:391px;
+            left:494px;
+            width:34px;
+            height:34px;
+        "
+    >
+
+    <!-- Kelompok 4 -->
+    <input
+        type="radio"
+        name="kelompok"
+        value="4"
+        style="
+            position:absolute;
+            top:431px;
+            left:494px;
+            width:34px;
+            height:34px;
+        "
+    >
+
+    <!-- Kelompok 5 -->
+    <input
+        type="radio"
+        name="kelompok"
+        value="5"
+        style="
+            position:absolute;
+            top:471px;
+            left:494px;
+            width:34px;
+            height:34px;
+        "
+    >
+
+    <!-- Kelompok 6 -->
+    <input
+        type="radio"
+        name="kelompok"
+        value="6"
+        style="
+            position:absolute;
+            top:511px;
+            left:494px;
+            width:34px;
+            height:34px;
+        "
+    >
+
+    <!-- TOMBOL MASUK -->
+    <button
+        id="btnMasuk"
+        onclick="masukKelas()"
+        style="
+            position:absolute;
+            top:564px;
+            left:571px;
+            width:167px;
+            height:31px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+        "
+    ></button>
+
+    <!-- TOMBOL KEMBALI -->
+    <button
+        onclick="buka('cover')"
+        style="
+            position:absolute;
+            top:609px;
+            left:500px;
+            width:50px;
+            height:30px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;
+        "
+    ></button>
+
+</div>
+
+<script>
+function masukKelas(){
+
+    let kelompok = document.querySelector(
+        'input[name="kelompok"]:checked'
+    );
+    let anggota =
+        document.getElementById("anggotaKelompok").value
+        .trim()
+        .split("\n")
+        .filter(n => n.trim() !== "");
+
+    let kodeInput =
+        document.getElementById("kodeKelas").value;
+
+    let kodeAsli =
+        localStorage.getItem("kode_kelas");
+
+    if(anggota.length === 0){
+        alert("Masukkan minimal satu anggota!");
+        return;
+    }
+
+    if(kodeInput === ""){
+        alert("Masukkan kode kelas!");
+        return;
+    }
+
+    if(kodeAsli === null){
+        alert("Belum ada kelas yang dibuat guru!");
+        return;
+    }
+
+    if(kodeInput !== kodeAsli){
+        alert("Kode kelas salah!");
+        return;
+    }
+
+    if(!kelompok){
+        alert("Pilih kelompok!");
+        return;
+    }
+
+    // 🔥 INI YANG BENAR (WAJIB)
+    localStorage.setItem(
+        "kelompokSaya",
+        parseInt(kelompok.value) - 1
+    );
+
+    localStorage.setItem(
+        "anggotaKelompok",
+        JSON.stringify(anggota)
+    );
+
+        let dataPemain = JSON.parse(
+            localStorage.getItem("dataPemain") || "[]"
+        );
+
+        dataPemain.push({
+            anggota: anggota,
+            kelompok: parseInt(kelompok.value)
+        });
+
+        localStorage.setItem(
+            "dataPemain",
+            JSON.stringify(dataPemain)
+        );
+
+        buka("papanpermainan");
+    }
+
+    function buka(id){
+
+        document
+            .querySelectorAll(".halaman")
+            .forEach(function(item){
+
+                item.style.display =
+                    "none";
+
+            });
+
+        document
+            .getElementById(id)
+            .style.display = "block";
+    }
+
+</script>
+
+<!-- PAPAN -->
+<div id="papanpermainan" class="halaman">
+
+    <div id="wadahPion"
+    style="
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:99999;
+    pointer-events:none;
+    ">
+    </div>
+
+    <img
+    src="papanpermainan.png"
+    style="
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    ">
+    
+    <!-- DADU -->
+    <img
+        id="gambarDadu"
+        src="dadu1.jpeg"
+        style="
+            position:absolute;
+            top:280px;
+            left:581px;
+            width:90px;
+            height:90px;
+            z-index:99999;
+        "
+    >
+
+    <button
+        id="btnRefleksi"
+        onclick="Refleksi()"
+        style="
+            position:absolute;
+            top:617px;
+            left:919px;
+            transform:translateX(-50%);
+            width:123px;
+            height:30px;
+            background:transparent;
+            color:white;
+            font-size:20px;
+            border:none;
+            cursor:pointer;
+            z-index:999999;
+        ">
+    </button>
+
+    <div id="namaPlayer"
+        style="
+            display:none;
+            position:absolute;
+        ">
+    </div>
+
+    <div
+    id="infoSkorTengah"
+    style="
+    position:absolute;
+    top:45px;
+    left:340px;
+    width:80px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    color:white;
+    text-shadow:2px 2px 3px black;
+    z-index:99999;
+    pointer-events:none;
+    ">
+    0
+    </div>
+
+    <div
+    id="infoPapan"
+    style="
+    position:absolute;
+    top:45px;
+    left:578px;
+    width:80px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    color:white;
+    text-shadow:2px 2px 3px black;
+    z-index:99999;
+    pointer-events:none;
+    ">
+    1 / 1
+    </div>
+
+    <div
+    id="infoGiliran"
+    style="
+    position:absolute;
+    top:45px;
+    left:825px;
+    width:80px;
+    text-align:center;
+    font-size:15px;
+    font-weight:bold;
+    color:white;
+    text-shadow:2px 2px 3px black;
+    z-index:99999;
+    pointer-events:none;
+    ">
+    </div>
+
+    <button
+    id="btnDadu"
+    onclick="lemparDadu()"
+    style="
+        position:absolute;
+        bottom:80px;
+        top :505px;
+        left:632px;
+        transform:translateX(-50%);
+        width:200px;
+        height:100px;
+        background:transparent;
+        color:white;
+        font-size:20px;
+        border:none;
+        cursor:pointer;
+        z-index:999999;
+    ">
+    </button>
+
+    <!-- POPUP NILAI SEREN TAUN -->
+    <div id="popupSerenTaun"
+    style="
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:99999999;
+    ">
+
+        <div style="position:relative;text-align:center;">
+
+            <img
+            id="gambarSerenTaun"
+            src=""
+            style="
+            width:350px;
+            max-width:90vw;
+            max-height:70vh;
+            border-radius:15px;
+            ">
+
+            <br><br>
+
+            <input
+            id="jawabanSerenTaun"
+            type="text"
+            placeholder="Tulis jawaban..."
+            style="
+            width:300px;
+            padding:10px;
+            font-size:18px;
+            ">
+
+            <br><br>
+
+            <button
+            onclick="cekJawabanSerenTaun()"
+            style="
+            margin-top:15px;
+            padding:10px 20px;
+            font-size:18px;
+            background:#2196F3;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            display:block;
+            margin-left:auto;
+            margin-right:auto;
+            ">
+            Kirim Jawaban
+            </button>
+
+            <div id="hasilJawaban"
+            style="
+            margin-top:10px;
+            color:white;
+            font-size:20px;
+            font-weight:bold;
+            ">
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP TANTANGAN ALAM -->
+    <div id="popupTantanganAlam"
+    style="
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:99999999;
+    ">
+
+        <div style="position:relative;text-align:center;">
+
+            <img
+            id="gambarTantanganAlam"
+            src=""
+            style="
+            width:350px;
+            max-width:90vw;
+            max-height:70vh;
+            border-radius:15px;
+            ">
+
+            <br><br>
+
+            <input
+            id="jawabanTantanganAlam"
+            type="text"
+            placeholder="Tulis jawaban..."
+            style="
+            width:300px;
+            padding:10px;
+            font-size:18px;
+            ">
+
+            <br><br>
+
+            <button
+            onclick="cekJawabanTantanganAlam()"
+            style="
+            margin-top:15px;
+            padding:10px 20px;
+            font-size:18px;
+            background:#2196F3;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            display:block;
+            margin-left:auto;
+            margin-right:auto;
+            ">
+            Kirim Jawaban
+            </button>
+
+            <div id="hasilJawabanAlam"
+            style="
+            margin-top:10px;
+            color:white;
+            font-size:20px;
+            font-weight:bold;
+            ">
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP PILIHAN KEPUTUSAN -->
+    <div id="popupPilihanKeputusan"
+    style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    justify-content:center;
+    align-items:center;
+    z-index:999999;
+    ">
+
+        <div style="position:relative;">
+
+            <img
+            id="gambarKeputusan"
+            src="jingga1.png"
+            style="
+            width:400px;
+            border-radius:15px;
+            ">
+
+            <button
+            id="btnA"
+            onclick="pilihKeputusan('A')"
+            style="
+            position:absolute;
+            width:23px;
+            height:23px;
+            border-radius:23%;
+            border:none;
+            background:orange;
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+            ">
+            A
+            </button>
+
+            <button
+            id="btnB"
+            onclick="pilihKeputusan('B')"
+            style="
+            position:absolute;
+            width:23px;
+            height:23px;
+            border-radius:23%;
+            border:none;
+            background:orange;
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+            ">
+            B
+            </button>
+
+            <button
+            id="btnC"
+            onclick="pilihKeputusan('C')"
+            style="
+            position:absolute;
+            width:23px;
+            height:23px;
+            border-radius:23%;
+            border:none;
+            background:orange;
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+            ">
+            C
+            </button>
+
+        </div>
+    </div>
+</div>
+
+    <!-- POPUP PERISTIWA ADAT -->
+    <div id="popupPeristiwaAdat"
+    style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    justify-content:center;
+    align-items:center;
+    z-index:999999;
+    ">
+
+        <div style="text-align:center;">
+
+            <img
+            id="gambarPeristiwaAdat"
+            src=""
+            style="
+            width:400px;
+            max-width:90vw;
+            max-height:80vh;
+            border-radius:15px;
+            ">
+
+            <br><br>
+
+            <button
+            onclick="tutupPeristiwaAdat()"
+            style="
+            padding:12px 30px;
+            font-size:18px;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            background:white;
+            ">
+            Tutup
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- POPUP KEGIATAN SAWAH -->
+    <div id="sawahBox"
+        style="
+        display:none;
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.8);
+        justify-content:center;
+        align-items:center;
+        z-index:99999999;
+        ">
+
+        <div style="
+        background:#fff8dc;
+        padding:25px;
+        border-radius:20px;
+        width:500px;
+        text-align:center;
+        ">
+
+            <h2>🌾 MISI SAWAH</h2>
+
+            <p id="sawahSoal"
+            style="
+            text-align:center;
+            font-size:18px;
+            line-height:1.5;
+            ">
+            </p>
+
+
+        <div id="sawahPilihan"
+            style="
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            margin-top:15px;
+            gap:10px;
+            ">
+        </div>
+    </div>
+
+    <div id="popupBonusPanen"
+        style="
+            display:none;
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.5);
+            text-align:center;
+        ">
+
+        <div
+            style="
+                background:white;
+                width:420px;
+                margin:120px auto;
+                padding:20px;
+                border-radius:10px;
+            ">
+
+            <h2>🌾 BONUS PANEN 🌾</h2>
+
+            <p>
+                Selamat!<br><br>
+                Panenmu berhasil disimpan di <b>Leuit</b>.<br><br>
+                Kamu mendapatkan:
+            </p>
+
+            <h3>⭐ +10 Poin ⭐</h3>
+
+            <button onclick="tutupBonusPanen()">Lanjut</button>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+let jumlahKelompok =
+    parseInt(localStorage.getItem("jumlahKelompok") || 4);
+
+// WAJIB: tiap device beda
+let kelompokSaya =
+    parseInt(localStorage.getItem("kelompokSaya") || 0);
+
+let sedangJalan = false;
+
+let skor = 0;
+
+let posisiPemain = Array(jumlahKelompok).fill(0);
+
+let sudahKeluarStart =
+Array(jumlahKelompok).fill(false);
+
+// pemain yang kehilangan giliran
+let skipGiliran = Array(jumlahKelompok).fill(false);
+
+// ================= JALUR =================
+const jalur = [
+
+    // START
+    {x:340,y:430},
+
+    // bawah ke kanan
+    {x:490,y:430}, // Musyawarah Adat
+    {x:590,y:430}, // Peristiwa Adat
+    {x:690,y:430}, // Waktu Tandur
+    {x:800,y:430}, // Tantangan Alam
+
+    // naik kanan
+    {x:835,y:360},
+    {x:835,y:260},
+    {x:835,y:160},
+
+    // atas ke kiri
+    {x:800,y:100},
+    {x:700,y:100},
+    {x:600,y:100},
+    {x:500,y:100},
+
+    // turun kiri
+    {x:340,y:100},
+    {x:340,y:180},
+    {x:340,y:260},
+    {x:340,y:340},
+
+];
+
+// ================= OFFSET PION =================
+const offset = [
+    {x:10,y:0},
+    {x:22,y:0},
+    {x:10,y:12},
+    {x:22,y:12},
+    {x:34,y:0},
+    {x:34,y:12}
+];
+
+// ================= RANDOM GILIRAN =================
+let urutanGiliran = [];
+
+for(let i=0;i<jumlahKelompok;i++){
+    urutanGiliran.push(i);
+}
+
+urutanGiliran.sort(() => Math.random() - 0.5);
+
+let indexGiliran = 0;
+let giliran = urutanGiliran[indexGiliran];
+
+// ================= INIT =================
+window.addEventListener("load", () => {
+
+    buatPion();
+    updateUI();
+
+    document.getElementById("namaPlayer").innerHTML =
+        localStorage.getItem("namaKelompok") || "";
+
+});
+
+// ================= BUAT PION =================
+function buatPion(){
+
+    const wadah = document.getElementById("wadahPion");
+    wadah.innerHTML = "";
+
+    const warna = [
+        "red",
+        "dodgerblue",
+        "gold",
+        "limegreen",
+        "purple",
+        "orange"
+    ];
+
+    for(let i=0;i<jumlahKelompok;i++){
+
+        let pion = document.createElement("div");
+
+        pion.id = "pion"+i;
+
+        pion.style.position = "absolute";
+        pion.style.width = "22px";
+        pion.style.height = "22px";
+        pion.style.borderRadius = "25%";
+
+        pion.style.background = warna[i];
+        pion.style.border = "2px solid white";
+        pion.style.boxShadow = "0 0 5px black";
+
+        // POSISI AWAL
+        pion.style.left =
+        (jalur[0].x + offset[i].x) + "px";
+
+        pion.style.top =
+        (jalur[0].y + offset[i].y) + "px";
+
+        pion.style.transition = "0.3s";
+        pion.style.zIndex = "999999";
+
+        wadah.appendChild(pion);
+    }
+}
+
+// ================= UPDATE UI =================
+function updateUI(){
+
+    giliran = urutanGiliran[indexGiliran];
+
+    for(let i=0;i<jumlahKelompok;i++){
+
+        document.getElementById("pion"+i).style.opacity =
+        i==giliran ? "1" : "0.4";
+
+    }
+
+    document.getElementById("infoGiliran").innerHTML =
+    "Kelompok " + (giliran+1);
+
+    document.getElementById("infoSkorTengah").innerHTML =
+    skor;
+
+    document.getElementById("infoPapan").innerHTML =
+    "1 / "+jumlahKelompok;
+
+}
+
+async function cekPetak(){
+
+    if(posisiPemain[giliran] === 10){
+        tampilNilaiSerenTaun();
+        return true;
+    }
+
+    if(posisiPemain[giliran] === 4){
+        tampilTantanganAlam();
+        return true;
+    }
+
+    if(
+        posisiPemain[giliran] === 2 ||
+        posisiPemain[giliran] === 8
+    ){
+        tampilPeristiwaAdat();
+        return true;
+    }
+
+    if(posisiPemain[giliran] === 6){
+        tampilPilihanKeputusan();
+        return true;
+    }
+
+    if(posisiPemain[giliran] === 7){
+        await krisisLingkungan();
+        return true;
+    }
+
+    if(posisiPemain[giliran] === 12){
+        await punan();
+        return true;
+    }
+
+    if(posisiPemain[giliran] === 11){
+        tampilNgendagNgared();
+        return true;
+    }
+
+    if(
+        posisiPemain[giliran] === 5 ||
+        posisiPemain[giliran] === 9
+    ){
+        tampilSawah();
+        return true;
+    }
+
+    if(posisiPemain[giliran] === 13){
+        await tampilBonusPanen();
+        return true;
+    }
+
+    return false;
+}
+
+// ================= LEMPAR DADU =================
+async function lemparDadu(){
+
+    // CEK APAKAH HARUS SKIP GILIRAN
+    if(skipGiliran[giliran]){
+
+        alert(
+            "Kelompok " +
+            (giliran+1) +
+            " kehilangan 1 giliran karena Krisis Lingkungan!"
+        );
+
+        skipGiliran[giliran] = false;
+
+        indexGiliran++;
+
+        if(indexGiliran >= urutanGiliran.length){
+            indexGiliran = 0;
+        }
+
+        giliran = urutanGiliran[indexGiliran];
+
+        updateUI();
+        return;
+    }
+
+    // MODE TEST
+    // if(giliran !== kelompokSaya) return;
+
+    if(sedangJalan) return;
+
+    sedangJalan = true;
+
+    // animasi dadu
+    let angka = 1;
+
+    for(let i=0;i<10;i++){
+
+        angka = Math.floor(Math.random()*6)+1;
+
+        document.getElementById("gambarDadu").src =
+        "dadu"+angka+".jpeg";
+
+        await new Promise(r=>setTimeout(r,100));
+    }
+
+    if(!sudahKeluarStart[giliran]){
+
+        if(angka === 6){
+
+            sudahKeluarStart[giliran] = true;
+
+            alert(
+                "🎉 Kelompok " +
+                (giliran+1) +
+                " berhasil keluar START!\n\nLempar dadu sekali lagi."
+            );
+
+            document.getElementById("gambarDadu").src =
+            "dadu6.jpeg";
+
+            sedangJalan = false;
+            return;
+
+        }else{
+
+            alert(
+                "Harus mendapatkan angka 6 untuk keluar START!"
+            );
+
+            indexGiliran++;
+
+            if(indexGiliran >= urutanGiliran.length){
+                indexGiliran = 0;
+            }
+
+            giliran = urutanGiliran[indexGiliran];
+
+            updateUI();
+
+            sedangJalan = false;
+            return;
+        }
+    }
+
+    let dapatEnam = (angka === 6);
+
+    document.getElementById("gambarDadu").src =
+    "dadu"+angka+".jpeg";
+
+    let pion = document.getElementById("pion"+giliran);
+
+    console.log(
+        "Kelompok",
+        giliran+1,
+        "jalan",
+        angka,
+        "langkah"
+    );
+
+    for(let i=0;i<angka;i++){
+
+        posisiPemain[giliran]++;
+
+        if(posisiPemain[giliran] >= jalur.length){
+            posisiPemain[giliran] = 0;
+        }
+
+        pion.style.left =
+        (jalur[posisiPemain[giliran]].x + offset[giliran].x) + "px";
+
+        pion.style.top =
+        (jalur[posisiPemain[giliran]].y + offset[giliran].y) + "px";
+
+        await new Promise(r=>setTimeout(r,300));
+    }
+
+    // KOTAK SEREN TAUN
+    if(posisiPemain[giliran] === 10){
+
+        tampilNilaiSerenTaun();
+
+        sedangJalan = false;
+        return;
+    }
+
+    // KOTAK TANTANGAN ALAM
+    if(posisiPemain[giliran] === 4){
+
+        tampilTantanganAlam();
+
+        sedangJalan = false;
+        return;
+    }
+
+    // KOTAK PERISTIWA ADAT
+    if(
+        posisiPemain[giliran] === 2 ||
+        posisiPemain[giliran] === 8
+    ){
+
+        tampilPeristiwaAdat();
+
+        sedangJalan = false;
+        return;
+    }
+
+    if(posisiPemain[giliran] === 6){
+
+        tampilPilihanKeputusan();
+
+        sedangJalan = false;
+        return;
+    }
+
+    // KOTAK KRISIS LINGKUNGAN
+    if(posisiPemain[giliran] === 7){
+
+        await krisisLingkungan();
+
+        sedangJalan = false;
+        return;
+    }
+
+    // KOTAK PUNAN
+    if(posisiPemain[giliran] === 12){
+
+        await punan();
+
+        sedangJalan = false;
+        return;
+    }
+
+    if(posisiPemain[giliran] === 11){
+    tampilNgendagNgared();
+    sedangJalan = false;
+    return;
+    }
+
+    if(posisiPemain[giliran] === 5){
+        tampilSawah();
+        sedangJalan = false;
+        return;
+    }
+
+    if(posisiPemain[giliran] === 9){
+        tampilSawah();
+        sedangJalan = false;
+        return;
+    }
+
+    if(posisiPemain[giliran] === 13){
+        tampilBonusPanen();
+        sedangJalan = false;
+        return;
+    }
+
+    // GANTI KE PION BERIKUTNYA
+    if(dapatEnam){
+
+        alert("🎲 Dapat angka 6! Silakan lempar lagi.");
+
+        updateUI();
+        sedangJalan = false;
+        return;
+
+    }
+
+    indexGiliran++;
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran = 0;
+    }
+
+    giliran = urutanGiliran[indexGiliran];
+
+    updateUI();
+
+    sedangJalan = false;
+}
+
+function Refleksi() {
+    document.getElementById("popupRefleksi").style.display = "flex";
+}
+
+// KARTU NILAI SEREN TAUN
+const kartuSerenTaun = [
+
+{
+    gambar:"seren taun 1.png",
+
+    kunci:[
+        "Sampah plastik",
+        "Botol sekali pakai",
+        "Lingkungan sekolah",
+        "Pengurangan sampah",
+        "Daur ulang",
+        "Bank sampah",
+        "Tempat sampah terpilah",
+        "Aksi bersama",
+        "Kepedulian lingkungan",
+        "Tanggung jawab"
+    ]
+},
+
+{
+    gambar:"seren taun 2.png",
+
+    kunci:[
+        "Mata air",
+        "Hutan",
+        "Penebangan pohon",
+        "Kelestarian hutan",
+        "Kebutuhan air",
+        "Ekonomi masyarakat",
+        "Konservasi",
+        "Reboisasi",
+        "Keseimbangan ekosistem",
+        "Musyawarah"
+    ]
+},
+
+{
+    gambar:"seren taun 3.png",
+
+    kunci:[
+        "Jerami",
+        "Pembakaran jerami",
+        "Kompos",
+        "Dekomposer",
+        "Penguraian",
+        "Perubahan zat",
+        "Pencemaran udara",
+        "Kesuburan tanah",
+        "Pertanian berkelanjutan",
+        "Ramah lingkungan"
+    ]
+},
+
+{
+    gambar:"seren taun 4.png",
+
+    kunci:[
+        "Perubahan iklim",
+        "Musim tanam",
+        "Kekeringan",
+        "Hutan gundul",
+        "Pembakaran sampah",
+        "Penghematan air",
+        "Penghijauan",
+        "Pengurangan emisi",
+        "Pelestarian lingkungan",
+        "Mitigasi perubahan iklim"
+    ]
+},
+
+{
+    gambar:"seren taun 5.png",
+
+    kunci:[
+        "Saluran irigasi",
+        "Sampah plastik",
+        "Ekosistem sawah",
+        "Aliran air",
+        "Hasil panen",
+        "Gotong royong",
+        "Kerja bakti",
+        "Pengelolaan sampah",
+        "Menjaga lingkungan",
+        "Nilai Seren Taun"
+    ]
+}
+
+];
+
+let kartuAktif = null;
+
+function tampilNilaiSerenTaun(){
+
+    let acak =
+    Math.floor(Math.random() * kartuSerenTaun.length);
+
+    kartuAktif = kartuSerenTaun[acak];
+
+    document.getElementById("gambarSerenTaun").src =
+    kartuAktif.gambar;
+
+    document.getElementById("jawabanSerenTaun").value = "";
+
+    document.getElementById("popupSerenTaun").style.display =
+    "flex";
+}
+
+function tutupSerenTaun(){
+
+    document.getElementById("popupSerenTaun").style.display = "none";
+
+    indexGiliran++;
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran = 0;
+    }
+
+    giliran = urutanGiliran[indexGiliran];
+
+    updateUI();
+
+    sedangJalan = false;
+}
+
+function cekJawabanSerenTaun(){
+
+    let jawaban =
+    document.getElementById("jawabanSerenTaun")
+    .value
+    .toLowerCase()
+    .trim();
+
+    let cocok = 0;
+
+    kartuAktif.kunci.forEach(kata => {
+
+        if(jawaban.includes(kata.toLowerCase())){
+            cocok++;
+        }
+
+    });
+
+    if(cocok >= 1){
+
+        skor += 10;
+
+        document.getElementById("infoSkorTengah").innerHTML = skor;
+
+        alert("✅ Jawaban Benar! +10 Poin");
+
+    }else{
+
+        alert("❌ Jawaban Kurang Tepat");
+    }
+
+    document.getElementById("popupSerenTaun").style.display =
+    "none";
+
+    document.getElementById("jawabanSerenTaun").value = "";
+
+    indexGiliran++;
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran = 0;
+    }
+
+    giliran = urutanGiliran[indexGiliran];
+
+    updateUI();
+}
+
+// KARTU NILAI TANTANGAN ALAM
+const kartuTantanganAlam = [
+
+{
+    gambar:"Merah 1.png",
+
+    kunci:[
+        "Ekosistem sawah",
+        "Rantai makanan",
+        "Hubungan antarmakhluk hidup",
+        "Populasi katak",
+        "Keseimbangan ekosistem"
+    ]
+},
+
+{
+    gambar:"Merah 2.png",
+
+    kunci:[
+        "Perubahan iklim",
+        "Perubahan musim",
+        "Curah hujan",
+        "Suhu udara",
+        "Hasil panen"
+    ]
+},
+
+{
+    gambar:"Merah 3.png",
+
+    kunci:[
+        "Perubahan kimia",
+        "Pembakaran jerami",
+        "Pengomposan",
+        "Ciri-ciri perubahan zat",
+        "Zat baru"
+    ]
+},
+
+{
+    gambar:"Merah 4.png",
+
+    kunci:[
+        "Kondisi sungai",
+        "Kualitas air",
+        "Pencemaran lingkungan",
+        "Ekosistem sehat",
+        "Keanekaragaman makhluk hidup"
+    ]
+},
+
+{
+    gambar:"Merah 5.png",
+
+    kunci:[
+        "Tradisi Seren Taun",
+        "Gotong royong",
+        "Pelestarian lingkungan",
+        "Tanggung jawab",
+        "Keseimbangan alam"
+    ]
+}
+
+];
+
+let kartuAktifTantangan = null;
+
+function tampilTantanganAlam(){
+
+    let acak =
+    Math.floor(Math.random() * kartuTantanganAlam.length);
+
+    kartuAktifTantangan = kartuTantanganAlam[acak];
+
+    document.getElementById("gambarTantanganAlam").src =
+    kartuAktifTantangan.gambar;
+
+    document.getElementById("jawabanTantanganAlam").value = "";
+
+    document.getElementById("popupTantanganAlam").style.display =
+    "flex";
+}
+
+function tutupTantanganAlam(){
+
+    document.getElementById("popupTantanganAlam").style.display =
+    "none";
+
+    indexGiliran++;
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran = 0;
+    }
+
+    giliran = urutanGiliran[indexGiliran];
+
+    updateUI();
+
+    sedangJalan = false;
+}
+
+function cekJawabanTantanganAlam(){
+
+    let jawaban =
+    document.getElementById("jawabanTantanganAlam")
+    .value
+    .toLowerCase()
+    .trim();
+
+    let cocok = 0;
+
+    kartuAktifTantangan.kunci.forEach(kata => {
+
+        if(jawaban.includes(kata.toLowerCase())){
+            cocok++;
+        }
+
+    });
+
+    const hasil =
+    document.getElementById("hasilJawabanAlam");
+
+    if(cocok >= 1){
+
+        skor += 10;
+
+        document.getElementById("infoSkorTengah").innerHTML = skor;
+
+        hasil.innerHTML =
+        "✅ Jawaban Benar! +10 Poin";
+
+    }else{
+
+        hasil.innerHTML =
+        "❌ Jawaban Kurang Tepat";
+    }
+
+    setTimeout(() => {
+
+        document.getElementById("popupTantanganAlam").style.display =
+        "none";
+
+        document.getElementById("jawabanTantanganAlam").value = "";
+
+        hasil.innerHTML = "";
+
+        indexGiliran++;
+
+        if(indexGiliran >= urutanGiliran.length){
+            indexGiliran = 0;
+        }
+
+        giliran = urutanGiliran[indexGiliran];
+
+        updateUI();
+
+        sedangJalan = false;
+
+    }, 2000);
+}
+
+// ======================
+// PILIHAN KEPUTUSAN
+// ======================
+
+const kartuKeputusan = [
+
+{
+    gambar:"jingga1.png",
+    jawaban:"A",
+
+    tombol:{
+        A:{top:251,left:5},
+        B:{top:304,left:5},
+        C:{top:359,left:5}
+    }
+},
+
+{
+    gambar:"jingga 2.png",
+    jawaban:"B",
+
+    tombol:{
+        A:{top:318,left:8},
+        B:{top:342,left:8},
+        C:{top:369,left:8}
+    }
+},
+
+{
+    gambar:"jingga 3.png",
+    jawaban:"C",
+
+    tombol:{
+        A:{top:318,left:8},
+        B:{top:342,left:8},
+        C:{top:369,left:8}
+    }
+},
+
+{
+    gambar:"jingga 4.png",
+    jawaban:"B",
+
+    tombol:{
+        A:{top:292,left:6},
+        B:{top:329,left:6},
+        C:{top:378,left:6}
+    }
+},
+
+{
+    gambar:"jingga 5.png",
+    jawaban:"A",
+
+    tombol:{
+        A:{top:293,left:6},
+        B:{top:346,left:6},
+        C:{top:381,left:6}
+    }
+}
+
+];
+
+let keputusanAktif = 0;
+
+function tampilPilihanKeputusan(){
+
+    keputusanAktif =
+    Math.floor(Math.random()*kartuKeputusan.length);
+
+    let kartu =
+    kartuKeputusan[keputusanAktif];
+
+    document.getElementById("gambarKeputusan").src =
+    kartu.gambar;
+
+    document.getElementById("btnA").style.top =
+    kartu.tombol.A.top + "px";
+
+    document.getElementById("btnA").style.left =
+    kartu.tombol.A.left + "px";
+
+    document.getElementById("btnB").style.top =
+    kartu.tombol.B.top + "px";
+
+    document.getElementById("btnB").style.left =
+    kartu.tombol.B.left + "px";
+
+    document.getElementById("btnC").style.top =
+    kartu.tombol.C.top + "px";
+
+    document.getElementById("btnC").style.left =
+    kartu.tombol.C.left + "px";
+
+    document.getElementById("popupPilihanKeputusan").style.display =
+    "flex";
+}
+
+function pilihKeputusan(pilihan){
+
+    if(pilihan === kartuKeputusan[keputusanAktif].jawaban){
+
+        alert("✅ Jawaban Benar! +10 Poin");
+
+        skor += 10;
+
+        document.getElementById("infoSkorTengah").innerHTML = skor;
+
+    }else{
+
+        alert("❌ Jawaban Kurang Tepat");
+    }
+
+    document.getElementById("popupPilihanKeputusan").style.display =
+    "none";
+
+    indexGiliran++;
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran = 0;
+    }
+
+    giliran = urutanGiliran[indexGiliran];
+
+    updateUI();
+
+    sedangJalan = false;
+}
+
+const kartuKrisisLingkungan = [
+
+{
+    pesan:"🌪️ Terjadi pencemaran sungai. Mundur 1 langkah!",
+    mundur:1
+},
+
+{
+    pesan:"🌳 Terjadi penebangan hutan liar. Mundur 2 langkah!",
+    mundur:2
+},
+
+{
+    pesan:"🌊 Banjir akibat sampah menyumbat saluran air. Mundur 3 langkah!",
+    mundur:3
+},
+
+{
+    pesan:"🔥 Kebakaran hutan menyebabkan kerusakan ekosistem. Mundur 4 langkah!",
+    mundur:4
+}
+
+];
+
+async function krisisLingkungan(){
+
+    let acak =
+    Math.floor(Math.random() * kartuKrisisLingkungan.length);
+
+    let kartu =
+    kartuKrisisLingkungan[acak];
+
+    alert(kartu.pesan);
+
+    let pion =
+    document.getElementById("pion"+giliran);
+
+    for(let i=0;i<kartu.mundur;i++){
+
+        posisiPemain[giliran]--;
+
+        if(posisiPemain[giliran] < 0){
+            posisiPemain[giliran] = 0;
+        }
+
+        pion.style.left =
+        (jalur[posisiPemain[giliran]].x + offset[giliran].x) + "px";
+
+        pion.style.top =
+        (jalur[posisiPemain[giliran]].y + offset[giliran].y) + "px";
+
+        await new Promise(r => setTimeout(r,300));
+    }
+
+    // kehilangan 1 giliran
+    skipGiliran[giliran] = true;
+
+    // cek petak tujuan setelah mundur
+    if(await cekPetak()){
+        return;
+    }
+
+    indexGiliran++;
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran = 0;
+    }
+
+    giliran = urutanGiliran[indexGiliran];
+
+    updateUI();
+}
+
+const kartuPunan = [
+
+{
+    pesan:"🌾 Melanggar aturan adat saat Seren Taun. Mundur 1 langkah!",
+    mundur:1
+},
+
+{
+    pesan:"🌾 Menjaga sikap dan menghormati adat. Maju 2 langkah!",
+    maju:2
+},
+
+{
+    pesan:"🌾 Membantu menjaga tradisi dan kebersamaan masyarakat. Maju 1 langkah!",
+    maju:1
+},
+
+{
+    pesan:"🌾 Tidak mengikuti aturan yang sudah disepakati. Mundur 2 langkah!",
+    mundur:2
+}
+
+];
+
+
+
+async function punan(){
+
+
+    let acak =
+    Math.floor(Math.random() * kartuPunan.length);
+
+
+    let kartu =
+    kartuPunan[acak];
+
+
+    alert(kartu.pesan);
+
+
+
+    let pion =
+    document.getElementById("pion"+giliran);
+
+
+
+    // kalau mundur
+    if(kartu.mundur){
+
+
+        for(let i=0;i<kartu.mundur;i++){
+
+
+            posisiPemain[giliran]--;
+
+
+            if(posisiPemain[giliran] < 0){
+                posisiPemain[giliran] = 0;
+            }
+
+
+            pion.style.left =
+            (jalur[posisiPemain[giliran]].x + offset[giliran].x)+"px";
+
+
+            pion.style.top =
+            (jalur[posisiPemain[giliran]].y + offset[giliran].y)+"px";
+
+
+            await new Promise(r=>setTimeout(r,300));
+
+        }
+
+    }
+
+
+
+    // kalau maju
+    if(kartu.maju){
+
+
+        for(let i=0;i<kartu.maju;i++){
+
+
+            posisiPemain[giliran]++;
+
+
+            if(posisiPemain[giliran] >= jalur.length){
+                posisiPemain[giliran] = jalur.length-1;
+            }
+
+
+            pion.style.left =
+            (jalur[posisiPemain[giliran]].x + offset[giliran].x)+"px";
+
+
+            pion.style.top =
+            (jalur[posisiPemain[giliran]].y + offset[giliran].y)+"px";
+
+
+            await new Promise(r=>setTimeout(r,300));
+
+        }
+
+    }
+
+    if(await cekPetak()){
+        return;
+    }
+
+    indexGiliran++;
+
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran=0;
+    }
+
+
+    giliran = urutanGiliran[indexGiliran];
+
+
+    updateUI();
+
+}
+
+const infoNgendagNgared = [
+
+{
+    pesan:
+    `🌾 NGENDAG
+    Ngendag merupakan salah satu kegiatan tradisional masyarakat Sunda yang berkaitan dengan pengolahan padi. Dalam rangkaian budaya pertanian, ngendag menggambarkan proses masyarakat dalam memanfaatkan hasil panen yang telah diperoleh. Kegiatan ini tidak hanya berkaitan dengan pekerjaan, tetapi juga mengajarkan nilai sosial seperti gotong royong, kerja sama, dan kebersamaan. Melalui ngendag, masyarakat belajar bahwa hasil alam harus dihargai dan dimanfaatkan dengan bijaksana. Nilai yang dipelajari:
+    1. Menghargai hasil bumi
+    2. Saling membantu
+    3. Menjaga tradisi leluhur`
+},
+
+
+{
+    pesan:
+    `🌱 NGARED
+    Ngared merupakan kegiatan masyarakat dalam merawat dan mengolah lahan pertanian. Kegiatan ini menunjukkan hubungan erat antara manusia dengan alam karena masyarakat bergantung pada lingkungan untuk memenuhi kebutuhan hidup. Ngared mengajarkan bahwa alam harus dijaga agar tetap seimbang dan dapat memberikan manfaat bagi generasi berikutnya. Dalam kehidupan masyarakat adat, menjaga lingkungan merupakan bagian dari tanggung jawab bersama. Nilai yang dipelajari:
+    1. Peduli lingkungan
+    2. Bertanggung jawab
+    3. Menjaga keseimbangan alam`
+}
+
+];
+
+
+
+function tampilNgendagNgared(){
+
+
+    let acak =
+    Math.floor(Math.random()*infoNgendagNgared.length);
+
+
+    let info =
+    infoNgendagNgared[acak];
+
+
+    alert(info.pesan);
+
+
+
+    indexGiliran++;
+
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran = 0;
+    }
+
+
+    giliran = urutanGiliran[indexGiliran];
+
+
+    updateUI();
+
+}
+
+// KARTU PERISTIWA ADAT
+const kartuPeristiwaAdat = [
+
+{
+    gambar:"Biru 1.png",
+
+},
+
+{
+    gambar:"Biru 2.png",
+
+},
+
+{
+    gambar:"Biru 3.png",
+
+},
+
+{
+    gambar:"Biru 4.png",
+
+},
+
+{
+    gambar:"Biru 5.png",
+
+},
+
+{
+    gambar:"Biru 6.png",
+
+}
+
+];
+
+function tampilPeristiwaAdat(){
+
+    let acak =
+    Math.floor(Math.random() * kartuPeristiwaAdat.length);
+
+    document.getElementById(
+        "gambarPeristiwaAdat"
+    ).src =
+    kartuPeristiwaAdat[acak].gambar;
+
+    document.getElementById(
+        "popupPeristiwaAdat"
+    ).style.display = "flex";
+}
+
+function tutupPeristiwaAdat(){
+
+    document.getElementById(
+        "popupPeristiwaAdat"
+    ).style.display = "none";
+
+    indexGiliran++;
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran = 0;
+    }
+
+    giliran = urutanGiliran[indexGiliran];
+
+    updateUI();
+
+    sedangJalan = false;
+}
+
+const misiSawah = [
+
+{
+    tipe:"susun",
+    soal:"🌱 Susun tahapan pertumbuhan padi:",
+    jawaban:[
+        "Menanam benih",
+        "Padi tumbuh",
+        "Merawat tanaman",
+        "Panen padi"
+    ]
+},
+
+{
+    tipe:"susun",
+    soal:"🌾 Susun proses pertanian:",
+    jawaban:[
+        "Menanam padi",
+        "Merawat sawah",
+        "Memanen padi",
+        "Mengolah hasil panen"
+    ]
+},
+
+{
+    tipe:"jawab",
+    soal:"☀️ Mengapa padi membutuhkan cahaya matahari?",
+    jawaban:[
+        "makanan",
+        "fotosintesis",
+        "energi",
+        "tumbuh"
+    ]
+},
+
+{
+    tipe:"jawab",
+    soal:"🌾 Mengapa Seren Taun berkaitan dengan panen?",
+    jawaban:[
+        "syukur",
+        "bersyukur",
+        "panen",
+        "hasil panen",
+        "terima kasih"
+    ]
+}
+
+];
+
+let sawahAktif;
+let susunanSawah = [];
+
+function tampilSawah(){
+
+    sawahAktif =
+    misiSawah[Math.floor(Math.random()*misiSawah.length)];
+
+    document.getElementById("sawahBox").style.display="flex";
+
+    document.getElementById("sawahSoal").innerHTML =
+    "<b>"+sawahAktif.soal+"</b>";
+
+    let area =
+    document.getElementById("sawahPilihan");
+
+    area.innerHTML="";
+
+    susunanSawah=[];
+
+    if(sawahAktif.tipe==="susun"){
+
+    let judul =
+    document.createElement("h3");
+
+    judul.innerHTML =
+    "Pilih urutan yang benar";
+
+    area.appendChild(judul);
+
+    let kotakUrutan =
+    document.createElement("div");
+
+    kotakUrutan.id="urutanSawah";
+
+    kotakUrutan.style.width="90%";
+    kotakUrutan.style.minHeight="120px";
+    kotakUrutan.style.padding="10px";
+    kotakUrutan.style.margin="0 auto 20px auto";
+    kotakUrutan.style.background="#fff";
+    kotakUrutan.style.border="2px dashed #999";
+    kotakUrutan.style.borderRadius="10px";
+    kotakUrutan.style.textAlign="left";
+
+    area.appendChild(kotakUrutan);
+
+    let acak =
+    [...sawahAktif.jawaban]
+    .sort(()=>Math.random()-0.5);
+
+    acak.forEach(teks=>{
+
+        let btn =
+        document.createElement("button");
+
+        btn.innerHTML = teks;
+
+        btn.style.width="220px";
+        btn.style.padding="12px";
+        btn.style.margin="5px";
+        btn.style.cursor="pointer";
+        btn.style.fontSize="16px";
+        btn.style.display="inline-block";
+        btn.style.verticalAlign="top";
+
+        btn.style.position="relative";
+
+        btn.style.left =
+        (Math.random()*150-75)+"px";
+
+        btn.style.top =
+        (Math.random()*50-25)+"px";
+
+        btn.onclick = async function(){
+
+            susunanSawah.push(teks);
+
+            let item =
+            document.createElement("div");
+
+            item.innerHTML =
+            susunanSawah.length +
+            ". " +
+            teks;
+
+            item.style.padding="8px";
+            item.style.margin="5px 0";
+            item.style.background="#f7f7f7";
+            item.style.border="1px solid #ccc";
+            item.style.borderRadius="8px";
+
+            document
+            .getElementById("urutanSawah")
+            .appendChild(item);
+
+            btn.remove();
+
+            if(
+                susunanSawah.length
+                ===
+                sawahAktif.jawaban.length
+            ){
+
+                if(
+                    JSON.stringify(susunanSawah)
+                    ===
+                    JSON.stringify(sawahAktif.jawaban)
+                ){
+
+                    alert("✅ Benar! Maju 2 langkah");
+
+                    await gerakSawah(2);
+
+                }else{
+
+                    alert("❌ Salah! Mundur 2 langkah");
+
+                    await gerakSawah(-2);
+                }
+
+                setTimeout(()=>{
+                    tutupSawah();
+                },300);
+            }
+        };
+
+        area.appendChild(btn);
+
+    });
+
+}else{
+
+        area.innerHTML=
+
+        `
+        <textarea
+        id="jawabSawah"
+        style="
+        width:300px;
+        height:100px;
+        padding:10px;
+        resize:none;
+        ">
+        </textarea>
+
+        <br><br>
+
+        <button
+        onclick="cekJawabSawah()"
+        style="
+        width:180px;
+        height:50px;
+        font-size:18px;
+        display:block;
+        margin:60px auto 0 auto;
+        border-radius:10px;
+        cursor:pointer;
+        ">
+        Kirim Jawaban
+        </button>
+        `;
+    }
+}
+
+async function cekJawabSawah(){
+
+    let jawab =
+    document.getElementById("jawabSawah")
+    .value
+    .toLowerCase()
+    .trim();
+
+    let cocok = 0;
+
+    for(let kata of sawahAktif.jawaban){
+
+        if(
+            jawab.includes(
+            kata.toLowerCase()
+            )
+        ){
+            cocok++;
+        }
+
+    }
+
+    if(cocok >= 1){
+
+        alert("✅ Benar! Maju 2 langkah");
+
+        await gerakSawah(2);
+
+    }else{
+
+        alert("❌ Salah! Mundur 2 langkah");
+
+        await gerakSawah(-2);
+    }
+
+    setTimeout(()=>{
+        tutupSawah();
+    },300);
+}
+
+function tutupSawah(){
+
+    document.getElementById("sawahBox").style.display="none";
+
+    indexGiliran++;
+
+    if(indexGiliran >= urutanGiliran.length){
+        indexGiliran = 0;
+    }
+
+    giliran =
+    urutanGiliran[indexGiliran];
+
+    updateUI();
+
+    sedangJalan = false;
+}
+
+async function gerakSawah(jumlah){
+
+    let pion =
+    document.getElementById("pion"+giliran);
+
+    for(let i=0;i<Math.abs(jumlah);i++){
+
+        if(jumlah > 0){
+
+            posisiPemain[giliran]++;
+
+            if(posisiPemain[giliran] >= jalur.length){
+                posisiPemain[giliran] = jalur.length-1;
+            }
+
+        }else{
+
+            posisiPemain[giliran]--;
+
+            if(posisiPemain[giliran] < 0){
+                posisiPemain[giliran] = 0;
+            }
+
+        }
+
+        pion.style.left =
+        (jalur[posisiPemain[giliran]].x + offset[giliran].x)+"px";
+
+        pion.style.top =
+        (jalur[posisiPemain[giliran]].y + offset[giliran].y)+"px";
+
+        await new Promise(r=>setTimeout(r,300));
+    }
+
+    if(await cekPetak()){
+        return;
+    }
+}
+
+async function tampilBonusPanen(){
+
+    skor += 10;
+
+    document.getElementById("infoSkorTengah").innerHTML = skor;
+
+    let pion = document.getElementById("pion"+giliran);
+
+    for(let i=0;i<2;i++){
+
+        posisiPemain[giliran]++;
+
+        pion.style.left =
+        (jalur[posisiPemain[giliran]].x + offset[giliran].x)+"px";
+
+        pion.style.top =
+        (jalur[posisiPemain[giliran]].y + offset[giliran].y)+"px";
+
+        await new Promise(r=>setTimeout(r,300));
+    }
+
+    if(await cekPetak()){
+        return;
+    }
+
+}
+
+function tutupBonusPanen(){
+
+    alert("TOMBOL LANJUT DIKLIK");
+
+}
+
+</script>
+
+<!-- HALAMAN REFLEKSI -->
+<div id="halaman_refleksi" class="halaman" style="display:none;">
+
+    <img
+        src="halaman_refleksi.png"
+        style="
+            object-fit:contain;
+        ">
+
+        <img
+            src="QRRefleksi.png"
+            alt="QR Code Refleksi"
+            style="
+                position:absolute;
+                top:336px;
+                left:570px;
+                width:120px;
+                height:120px;
+                z-index:10;
+            ">
+
+        <!-- Link -->
+        <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdzNNyOARVO57ATbcgueK-cqOJgGyAtgx-MJc9E5xAoaqlAgg/viewform"
+            target="_blank"
+            style="
+                position:absolute;
+                top:457px;
+                left:497px;
+                width:290px;
+                text-align:center;
+                font-size:10px;
+                color:#0b63ce;
+                text-decoration:underline;
+                word-break:break-all;
+            ">
+            https://docs.google.com/forms/d/e/1FAIpQLSdzNNyOARVO57ATbcgueK-cqOJgGyAtgx-MJc9E5xAoaqlAgg/viewform
+        </a>
+
+    <!-- Tombol NEXT -->
+    <button
+        onclick="nextRefleksi()"
+        style="
+            position:absolute;
+            top:483px;
+            left:630px;
+            transform:translateX(-50%);
+            width:98px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:999999;">
+    </button>
+
+</div>
+
+<script>
+
+function Refleksi(){
+
+    document.getElementById("papanpermainan").style.display = "none";
+    document.getElementById("halaman_refleksi").style.display = "block";
+
+}
+
+function nextRefleksi(){
+
+    document.getElementById("halaman_refleksi").style.display = "none";
+    document.getElementById("halaman_selesai").style.display = "block";
+
+}
+
+</script>
+
+<!-- HALAMAN SELESAI -->
+<div id="halaman_selesai" class="halaman" style="display:none;">
+
+    <img
+        src="halaman_selesai.png"
+        style="
+            width:100%;
+            height:100%;
+            object-fit:contain;
+        ">
+
+    <!-- Skor -->
+    <div
+        id="SkorKeseimbangan"
+        style="
+            position:absolute;
+            top:307px;
+            left:805px;
+            transform:translateX(-50%);
+            width:250px;
+            font-size:20px;
+            font-weight:bold;
+            color:black;
+            text-align:left;
+            z-index:999999;
+        ">
+        0
+    </div>
+
+    <div
+        id="SkorPanen"
+        style="
+            position:absolute;
+            top:325px;
+            left:737px;
+            transform:translateX(-50%);
+            width:250px;
+            font-size:20px;
+            font-weight:bold;
+            color:black;
+            text-align:left;
+            z-index:999999;
+        ">
+        0
+    </div>
+
+    <!-- Main Lagi -->
+    <button
+        onclick="mainLagi()"
+        style="
+            position:absolute;
+            top:523px;
+            left:650px;
+            transform:translateX(-50%);
+            width:180px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:999999;
+        ">
+    </button>
+
+    <!-- Kembali ke Menu -->
+    <button
+        onclick="kembaliMenu()"
+        style="
+            position:absolute;
+            top:575px;
+            left:650px;
+            transform:translateX(-50%);
+            width:180px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:999999;
+        ">
+    </button>
+
+</div>
+
+<script>
+
+function mainLagi(){
+
+    document.getElementById("halaman_selesai").style.display = "none";
+    document.getElementById("masukkelas").style.display = "block";
+
+}
+
+function kembaliMenu(){
+
+    document.getElementById("halaman_selesai").style.display="none";
+    document.getElementById("cover").style.display="block";
+
+}
+
+</script>
+
+<!-- PANEL GURU -->
+<div id="panel_guru" class="halaman">
+
+    <img src="panel_guru.png" style="width:100%;height:100%;object-fit:contain;">
+
+    <!-- 1-4 KELOMPOK -->
+    <input
+        type="radio"
+        name="jumlahKelompok"
+        value="4"
+        style="
+            position:absolute;
+            top:316px;
+            left:504px;
+            width:32px;
+            height:32px;
+            z-index:999;
+        "
+    >
+
+    <!-- 1-5 KELOMPOK -->
+    <input
+        type="radio"
+        name="jumlahKelompok"
+        value="5"
+        style="
+            position:absolute;
+            top:356px;
+            left:504px;
+            width:32px;
+            height:32px;
+            z-index:999;
+        "
+    >
+
+    <!-- 1-6 KELOMPOK -->
+    <input
+        type="radio"
+        name="jumlahKelompok"
+        value="6"
+        style="
+            position:absolute;
+            top:396px;
+            left:504px;
+            width:32px;
+            height:32px;
+            z-index:999;
+        "
+    >
+
+    <!-- INPUT NAMA KELAS -->
+    <input
+        id="namaKelas"
+        type="text"
+        style="
+            position:absolute;
+            top:469px;
+            left:500px;
+            width:280px;
+            height:40px;
+        ">
+
+    <button
+        onclick="buatKelas()"
+        style="
+            position:absolute;
+            top:518px;
+            left:525px;
+            width:220px;
+            height:55px;
+            background:transparent;
+        ">
+    </button>
+
+    <button
+        onclick="buka('cover')"
+        style="
+            position:absolute;
+            top:609px;
+            left:500px;
+            width:50px;
+            height:30px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;
+        ">
+    </button>
+
+</div>
+
+<script>
+
+function buatKelas(){
+
+    let namaKelas =
+        document.getElementById("namaKelas").value.trim();
+
+    if(namaKelas == ""){
+        alert("Masukkan nama kelas!");
+        return;
+    }
+
+    let kelompok =
+        document.querySelector(
+            'input[name="jumlahKelompok"]:checked'
+        );
+
+    if(!kelompok){
+        alert("Pilih jumlah kelompok!");
+        return;
+    }
+
+    let kode =
+        "ST" +
+        Math.floor(
+            1000 + Math.random() * 9000
+        );
+
+    localStorage.setItem(
+        "namaKelas",
+        namaKelas
+    );
+
+    localStorage.setItem(
+        "jumlahKelompok",
+        kelompok.value
+    );
+
+    localStorage.setItem(
+        "kode_kelas",
+        kode
+    );
+
+    document.getElementById("tampilKode").innerText =
+        kode;
+
+    buka("kode_kelas");
+}
+
+</script>
+
+<!-- KODE KELAS -->
+<div id="kode_kelas" class="halaman">
+
+    <img src="kode_kelas.png">
+
+    <div
+        id="tampilKode"
+        style="
+            position:absolute;
+            top:150px;
+            left:397px;
+            width:350px;
+            text-align:center;
+            font-size:28px;
+            font-weight:bold;
+        ">
+    </div>
+
+    <!-- SALIN KODE -->
+    <button
+    onclick="salinKode()"
+    style="
+    position:absolute;
+    top:219px;
+    left:540px;
+    width:189px;
+    height:44px;
+    background:transparent;
+    z-index:9999;
+    ">
+    </button>
+
+    <!-- BAGIKAN -->
+    <button
+        onclick="bagikanKode()"
+        style="
+            position:absolute;
+            top:271px;
+            left:540px;
+            width:189px;
+            height:44px;
+            background:transparent;
+            z-index:9999;
+        ">
+    </button>
+
+    <!-- MASUK DASHBOARD -->
+    <button
+        onclick="buka('dashboardguru')"
+        style="
+            position:absolute;
+            top:465px;
+            left:525px;
+            width:240px;
+            height:55px;
+            background:transparent;
+            z-index:9999;
+        ">
+    </button>
+
+    <!-- KEMBALI -->
+    <button
+        onclick="buka('panel_guru')"
+        style="
+            position:absolute;
+            top:609px;
+            left:500px;
+            width:50px;
+            height:30px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;
+        ">
+    </button>
+
+</div>
+
+<script>
+function salinKode(){
+
+    let kode = localStorage.getItem("kode_kelas");
+
+    console.log("Kode:", kode);
+
+    navigator.clipboard.writeText(kode)
+    .then(() => {
+        alert("Kode berhasil disalin!");
+    })
+    .catch((err) => {
+        console.error(err);
+        alert("Error: " + err);
+    });
+
+}
+
+function bagikanKode(){
+
+    let kode = localStorage.getItem("kode_kelas");
+
+    if(navigator.share){
+
+        navigator.share({
+            title:"Board Game IPA",
+            text:"Kode kelas saya : " + kode
+        });
+
+    }else{
+
+        alert("Browser tidak mendukung fitur bagikan.");
+
+    }
+
+}
+
+</script>
+
+<!-- DASHBOARD GURU -->
+<div id="dashboardguru" class="halaman">
+
+    <img
+        src="dashboardguru.png"
+        style="
+            width:100%;
+            height:100%;
+            object-fit:contain;
+        ">
+
+    <!-- KODE KELAS -->
+    <div
+        id="kodeDashboard"
+        style="
+            position:absolute;
+            top:210px;
+            left:572px;
+            width:80px;
+            text-align:center;
+            font-size:20px;
+            font-weight:bold;
+            color:black;
+            background:transparent;
+            z-index:9999;
+        ">
+    </div>
+
+    <!-- JUMLAH KELOMPOK -->
+    <div
+        id="jumlahDashboard"
+        style="
+            position:absolute;
+            top:253px;
+            left:590px;
+            width:50px;
+            text-align:center;
+            font-size:20px;
+            font-weight:bold;
+            color:black;
+            background:transparent;
+            z-index:9999;
+        ">
+    </div>
+
+    <!-- DAFTAR SISWA -->
+    <div
+        id="daftarSiswa"
+        style="
+            position:absolute;
+            top:340px;
+            left:520px;
+            width:255px;
+            height:130px;
+            overflow-y:auto;
+            color:black;
+            background:transparent;
+            font-size:15px;
+            font-weight:bold;
+            line-height:30px;
+            z-index:9999;
+        ">
+    </div>
+
+    <!-- TOMBOL MULAI PERMAINAN -->
+    <button
+        onclick="mulaiPermainan()"
+        style="
+            position:absolute;
+            top:502px;
+            left:558px;
+            width:183px;
+            height:45px;
+            background:transparent;
+            border:none;
+            z-index:999999;
+        ">
+    </button>
+
+    <!-- TOMBOL RESET -->
+    <button
+        onclick="resetRoom()"
+        style="
+            position:absolute;
+            top:555px;
+            left:558px;
+            width:183px;
+            height:45px;
+            background:transparent;
+        ">
+    </button>
+
+    <!-- KEMBALI -->
+    <button
+        onclick="buka('kode_kelas')"
+        style="
+            position:absolute;
+            top:609px;
+            left:500px;
+            width:60px;
+            height:30px;
+            background:transparent;
+        ">
+    </button>
+
+</div>
+
+<script>
+
+function refreshDashboard(){
+
+    let kode =
+        localStorage.getItem("kode_kelas");
+
+    let jumlah =
+        localStorage.getItem("jumlahKelompok");
+
+    let dataPemain = JSON.parse(
+        localStorage.getItem("dataPemain") || "[]"
+    );
+
+    // KODE KELAS
+    document.getElementById("kodeDashboard").innerHTML =
+        kode ? kode : "-";
+
+    // JUMLAH KELOMPOK
+    document.getElementById("jumlahDashboard").innerHTML =
+        jumlah ? jumlah : "-";
+
+    // DAFTAR SISWA
+    let html = "";
+
+    for(let i=1;i<=parseInt(jumlah);i++){
+
+        html += "<b>Kelompok "+i+"</b><br>";
+
+        let anggota = dataPemain.filter(p => p.kelompok == i);
+
+        if(anggota.length){
+
+            anggota.forEach(a=>{
+
+                a.anggota.forEach(nama=>{
+                    html += "• " + nama + "<br>";
+                });
+
+                html += "<br>";
+
+            });
+
+        }else{
+
+            html += "Belum ada peserta<br>";
+
+        }
+
+        html += "<br>";
+    }
+
+    document.getElementById("daftarSiswa").innerHTML = html;
+
+}
+
+// ===== MULAI PERMAINAN =====
+function mulaiPermainan(){
+
+    localStorage.setItem(
+        "gameMulai",
+        "1"
+    );
+
+    localStorage.setItem(
+        "statusPermainan",
+        "Sedang Bermain"
+    );
+
+    localStorage.setItem(
+        "giliran",
+        "Kelompok 1"
+    );
+
+    refreshRoom();
+
+    buka("RoomPermainan");
+
+}
+
+function resetRoom(){
+
+    if(!confirm("Yakin ingin mereset room?")){
+        return;
+    }
+
+    localStorage.clear();
+
+    alert("Room berhasil direset!");
+
+    buka("kode_kelas");
+
+}
+
+setInterval(refreshDashboard,1000);
+
+</script>
+
+<!-- ROOM PERMAINAN -->
+<div id="RoomPermainan" class="halaman" style="display:none;">
+
+    <img
+        src="RoomPermainan.png"
+        style="
+            width:100%;
+            height:100%;
+            object-fit:contain;
+        ">
+
+    <!-- SKOR KELOMPOK -->
+    <div
+        id="skorRoom"
+        style="
+            position:absolute;
+            top:190px;
+            left:290px;
+            width:450px;
+            height:500px;
+            overflow-y:auto;
+            font-size:24px;
+            font-weight:bold;
+            color:black;
+            z-index:9999;
+        ">
+    </div>
+
+    <!-- KODE KELAS -->
+    <div
+        id="kodeRoom"
+        style="
+            position:absolute;
+            top:190px;
+            left:690px;
+            width:250px;
+            text-align:center;
+            font-size:35px;
+            font-weight:bold;
+            color:black;
+            z-index:9999;
+        ">
+    </div>
+
+    <!-- GILIRAN -->
+    <div
+        id="giliranRoom"
+        style="
+            position:absolute;
+            top:330px;
+            left:692px;
+            width:250px;
+            text-align:center;
+            font-size:35px;
+            font-weight:bold;
+            color:black;
+            z-index:9999;
+        ">
+    </div>
+
+    <!-- STATUS -->
+    <div
+        id="statusRoom"
+        style="
+            position:absolute;
+            top:470px;
+            left:692px;
+            width:250px;
+            text-align:center;
+            font-size:30px;
+            font-weight:bold;
+            color:black;
+            z-index:9999;
+        ">
+    </div>
+
+    <button
+        onclick="akhiriPermainan()"
+        style="
+            position:absolute;
+            top:557px;
+            left:460px;
+            width:330px;
+            height:65px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;
+        ">
+    </button>
+</div>
+
+<script>
+function refreshRoom(){
+
+    let kode =
+        localStorage.getItem("kode_kelas") || "-";
+
+    let jumlah =
+        parseInt(
+            localStorage.getItem("jumlahKelompok")
+        ) || 0;
+
+    let giliran =
+        localStorage.getItem("giliran") || "Kelompok 1";
+
+    let status =
+        localStorage.getItem("statusPermainan")
+        || "Menunggu peserta lain...";
+
+    document.getElementById(
+        "kodeRoom"
+    ).innerHTML = kode;
+
+    document.getElementById(
+        "giliranRoom"
+    ).innerHTML = giliran;
+
+    document.getElementById(
+        "statusRoom"
+    ).innerHTML = status;
+
+    let html = "";
+
+    for(let i=1;i<=jumlah;i++){
+
+        let skor =
+            localStorage.getItem(
+                "skorKelompok"+i
+            ) || 0;
+
+        html +=
+            "Kelompok " + i +
+            " : " + skor +
+            " poin<br><br>";
+
+    }
+
+    document.getElementById(
+        "skorRoom"
+    ).innerHTML = html;
+
+}
+
+function akhiriPermainan(){
+
+    localStorage.setItem(
+        "statusPermainan",
+        "Permainan Selesai"
+    );
+
+    refreshRoom();
+
+    alert(
+        "Permainan selesai!"
+    );
+
+}
+
+</script>
+
+<!-- PETUNJUK PENGGUNAAN -->
+<div id="petunjuk_penggunaan" class="halaman">
+
+    <img
+        src="petunjuk_penggunaan.png"
+        id="gambarPetunjuk"
+        class="bg">
+
+    <!-- UNTUK GURU -->
+    <button
+        onclick="gantiGambar('untuk_guru.png')"
+        style="
+            position:absolute;
+            top:275px;
+            left:546px;
+            width:188px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;
+        ">
+    </button>
+
+    <!-- UNTUK SISWA -->
+    <button
+        onclick="gantiGambar('untuk_siswa.png')"
+        style="
+            position:absolute;
+            top:327px;
+            left:546px;
+            width:188px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;
+        ">
+    </button>
+
+    <!-- CARA BERMAIN -->
+    <button
+        onclick="gantiGambar('cara_bermain.png')"
+        style="
+            position:absolute;
+            top:379px;
+            left:546px;
+            width:188px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;
+        ">
+    </button>
+
+    <!-- TUJUAN PERMAINAN -->
+    <button
+        onclick="buka('menuInformasi')"
+        style="
+            position:absolute;
+            top:431px;
+            left:546px;
+            width:188px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;
+        ">
+    </button>
+
+    <!-- TOMBOL KEMBALI -->
+    <button
+        onclick="tombolKembaliPetunjuk()"
+        style="
+            position:absolute;
+            top:609px;
+            left:500px;
+            width:50px;
+            height:30px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;
+        ">
+    </button>
+
+</div>
+
+<!-- MENU INFORMASI -->
+<div id="menuInformasi" class="halaman">
+
+    <img src="TujuanPermainan.png" class="bg">
+
+    <!-- TUJUAN PERMAINAN -->
+    <button
+        onclick="buka('Tujuan_Permainan')"
+        style="
+            position:absolute;
+            top:304px;
+            left:535px;
+            width:205px;
+            height:60px;
+            background:transparent;
+            border:none;
+            cursor:pointer;">
+    </button>
+
+    <!-- MATERI -->
+    <button
+        onclick="buka('Materi')"
+        style="
+            position:absolute;
+            top:376px;
+            left:535px;
+            width:205px;
+            height:60px;
+            background:transparent;
+            border:none;
+            cursor:pointer;">
+    </button>
+
+    <!-- PENGEMBANG -->
+    <button
+        onclick="buka('Pengembang')"
+        style="
+            position:absolute;
+            top:448px;
+            left:535px;
+            width:205px;
+            height:60px;
+            background:transparent;
+            border:none;
+            cursor:pointer;">
+    </button>
+
+    <!-- REFLEKSI -->
+    <button
+        onclick="buka('Refleksi')"
+        style="
+            position:absolute;
+            top:520px;
+            left:535px;
+            width:205px;
+            height:60px;
+            background:transparent;
+            border:none;
+            cursor:pointer;">
+    </button>
+
+    <!-- KEMBALI -->
+    <button
+        onclick="buka('petunjuk_penggunaan')"
+        style="
+            position:absolute;
+            top:609px;
+            left:470px;
+            width:30px;
+            height:35px;
+            background:transparent;
+            border:none;
+            cursor:pointer;">
+    </button>
+
+</div>
+
+<script>
+
+function gantiGambar(namaFile){
+
+    document.getElementById(
+        "gambarPetunjuk"
+    ).src = namaFile;
+
+}
+
+function tombolKembaliPetunjuk(){
+
+    let gambar =
+        document.getElementById(
+            "gambarPetunjuk"
+        );
+
+    if(
+        gambar.src.includes(
+            "petunjuk_penggunaan.png"
+        )
+    ){
+        buka("cover");
+    }
+    else{
+        gambar.src =
+            "petunjuk_penggunaan.png";
+    }
+
+}
+
+</script>
+
+<!-- HALAMAN TUJUAN PERMAINAN -->
+<div id="Tujuan_Permainan" class="halaman" style="display:none;">
+
+    <img
+        src="Tujuan_Permainan.png"
+        class="bg">
+
+    <!-- Tombol kembali -->
+    <button
+        onclick="buka('menuInformasi')"
+        style="
+            position:absolute;
+            left:565px;
+            bottom:28px;
+            width:150px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;">
+    </button>
+
+</div>
+
+<!-- HALAMAN MATERI -->
+<div id="Materi" class="halaman" style="display:none;">
+
+    <img
+        src="Materi.png"
+        class="bg">
+
+    <!-- ROOM 1 -->
+    <button
+        onclick="buka('RoomMateri1')"
+        style="
+            position:absolute;
+            top:202px;
+            left:473px;
+            width:330px;
+            height:80px;
+            background:transparent;
+            border:none;
+            cursor:pointer;">
+    </button>
+
+    <!-- ROOM 2 -->
+    <button
+        onclick="buka('RoomMateri2')"
+        style="
+            position:absolute;
+            top:304px;
+            left:473px;
+            width:330px;
+            height:80px;
+            background:transparent;
+            border:none;
+            cursor:pointer;">
+    </button>
+
+    <!-- ROOM 3 -->
+    <button
+        onclick="buka('RoomMateri3')"
+        style="
+            position:absolute;
+            top:406px;
+            left:473px;
+            width:330px;
+            height:80px;
+            background:transparent;
+            border:none;
+            cursor:pointer;">
+    </button>
+
+    <!-- ROOM 4 -->
+    <button
+        onclick="buka('RoomMateri4')"
+        style="
+            position:absolute;
+            top:498px;
+            left:473px;
+            width:330px;
+            height:80px;
+            background:transparent;
+            border:none;
+            cursor:pointer;">
+    </button>
+
+    <!-- Tombol kembali -->
+    <button
+        onclick="buka('menuInformasi')"
+        style="
+            position:absolute;
+            top:598px;
+            left:440px;
+            width:45px;
+            height:45px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;">
+    </button>
+
+</div>
+
+<script>
+
+function gantiGambar(namaFile){
+
+    document.getElementById(
+        "gambarMateri"
+    ).src = namaFile;
+
+}
+
+function tombolKembaliMateri(){
+
+    let gambar =
+        document.getElementById(
+            "gambarMateri"
+        );
+
+    if(
+        gambar.src.includes(
+            "petunjuk_penggunaan.png"
+        )
+    ){
+        buka("cover");
+    }
+    else{
+        gambar.src =
+            "petunjuk_penggunaan.png";
+    }
+
+}
+
+</script>
+
+<!-- HALAMAN ROOM 1 -->
+<div id="RoomMateri1" class="halaman" style="display:none;">
+
+    <img src="RoomMateri1.png" class="bg">
+
+    <!-- Isi Materi -->
+    <div class="isiMateri">
+
+        <figure class="gambarBox">
+            <img src="gambar24.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.4. Upacara adat Seren Taun di Kasepuhan Cisungsang Lebak
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : : eventdaerah.kemenparekraf.go.id
+            </figcaption>
+        </figure>
+
+        <p>
+            Upacara Seren Taun, masyarakat bekerja sama dan bergotong royong untuk menyelenggarakan upacara tersebut. Hal ini menunjukkan kuatnya nilai kebersamaan dan persatuan dalam kehidupan masyarakat adat. Tradisi Seren Taun juga mengajarkan bahwa manusia tidak dapat hidup tanpa alam. Tanah yang subur, ketersediaan air, udara yang bersih, serta kondisi iklim yang baik sangat memengaruhi keberhasilan panen. Jika lingkungan mengalami kerusakan, maka hasil pertanian juga dapat terganggu. 
+        </p>
+
+        <p>
+            Masyarakat adat di berbagai wilayah memiliki kesadaran kolektif untuk menjaga kelestarian alam dan memanfaatkan sumber daya secara bijaksana sebagai bagian dari kearifan lokal yang diwariskan secara turun-temurun. Nilai-nilai tersebut tidak hanya berfungsi sebagai pedoman dalam kehidupan sehari-hari, tetapi juga menjadi bentuk pengetahuan ekologis lokal yang relevan dalam upaya menjaga keseimbangan lingkungan. Kearifan lokal Seren Taun mencerminkan adanya hubungan harmonis antara manusia, alam, dan budaya yang terus dipertahankan dari generasi ke generasi. Nilai-nilai tersebut menjadi landasan penting dalam mengintegrasikan kearifan lokal ke dalam pembelajaran IPA guna meningkatkan pemahaman dan kepedulian peserta didik terhadap lingkungan.
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar25.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.5. Budaya Seren Taun di Cisungsang
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : : antaranews.com
+            </figcaption>
+        </figure>
+
+        <p>
+            Melalui Seren Taun, peserta didik dapat memahami bahwa tradisi budaya tidak hanya berkaitan dengan adat istiadat, tetapi juga mencerminkan hubungan antara manusia dan lingkungan. Dalam Tradisi Seren Taun ini terdapat berbagai aktivitas yang berkaitan dengan konsep IPA, seperti menjaga keseimbangan ekosistem dan pelestarian lingkungan yang termasuk dalam materi interaksi makhluk hidup, penggunaan sumber daya alam yang bijak serta pemanfaatan bahan-bahan alami yang berkaitan dengan jenis dan sifat zat, hingga keterkaitan musim tanam dan kondisi cuaca yang berhubungan dengan perubahan iklim dan dampaknya terhadap kehidupan. Tradisi Seren Taun dapat dijadikan sebagai konteks pembelajaran IPA terpadu yang relevan dengan kehidupan sehari-hari peserta didik sekaligus membantu menanamlan nilai kepedulian terhadap lingkungan. 
+        </p>
+
+        <h3>a. Komponen Biotik dan Abiotik dalam Ekosistem</h3>
+
+        <p>
+            Keseimbangan ekosistem merupakan kondisi ketika komponen biotik dan abiotik dalam suatu lingkungan berada dalam keadaan yang relatif stabil sehingga proses ekologis seperti aliran energi dan siklum materi dapat berlangsung secara berkelanjutan. Keseimbangan memungkinkan ekosistem mempertahanlan kelangsungan hidup berbagai jenis makhluk hidup serta menjaga kestabilan lingkungan dalam jangka panjang (Haya et al., 2025). Menurut Begon, Townsend, dan Harper dalam buku Ecology: From Individuals to Ecosystems, keseimbangan ekosistem sangat dipengaruhi oleh interaksi antarorganisme serta hubungan antara organisme dengan lingkungannya (Begon, Townsend & Harper, 2006). Komponen biotik seperti tumbuhan, hewan, dan mikroorganisme berinteraksi dengan komponen abiotik seperti tanah, air, udara, cahaya matahari, dan suhu sehingga membentuk suatu sistem ekologis yang dinamis. Hubungan antara komponen biotik dan abiotik menjadi faktor penting dalam menjaga keseimbangan suatu ekosistem (Enquist et al., 2015).
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar26.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.6 Komponen Biotik dan Abiotik dalam Ekosistem
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : biologismaba.blogspot.com
+            </figcaption>
+        </figure>
+
+        <p>
+            Hubungan antara komponen biotik dan abiotik dapat ditemukan dalam praktik pertanian tradisional yang berkaitan dengan Tradisi Seren Taun. Dalam proses penanaman padi, masyarakat memanfaatkan unsur-unsur abiotik seperti tanah, air, cahaya matahari, udara dan kondisi cuaca untuk mendukung pertumbuhan tanaman padi sebagai komponen biotik utama dalam ekosistem sawah. Selain tanaman padi, terdapat juga organisme lain seperti serangga, burung, cacing, dan mikroorganisme tanah yang berperan dalam menjaga keseimbangan ekosistem pertanian. Hubungan antara komponen biotik dan abiotik tersebut menunjukkan bahwa keberhasilan pertanian tardisional sangat dipengaruhi oleh kondisi lingkungan yang seimbang. Melalui praktik pertanian yang diwariskan secara turun-temurun dalam Tradisi Seren Taun, masyarakat menunjukkan adanya upaya menjaga keselarasan antara manusia dan alam agar berkelanjutan lingkungan tetap terpelihara (Triana & Andi, 2023).
+        </p>
+
+        <hr>
+
+        <h3>b. Bentuk Interaksi Makhluk Hidup dalam Ekosistem</h3>
+
+        <p>
+            Hubungan antarorganisme dalam suatu ekosistem membentuk jaringan interaksi seperti rantai makanan dan jaring-jaring makanan. Interaksi tersebut memungkinkan terjadinya aliran energi dari produsen menuju konsumen hingga pengurai. Aliran energi tersebut menunjukkan adanya ketergantungan antarorganisme dalam memperoleh sumber energi untuk mempertahankan kelangsungan hidupnya. Dalam jaring-jaring makanan, satu organisme dapat memiliki lebih dari satu hubungan dengan organisme lainnya sehingga membentuk pola interaksi yang lebih kompleks. Keberadaan hubungan yang beragam tersebut membantu menjaga kestabilan ekosistem karena organisme memiliki alternatif sumber makanan ketika terjadi perubahan pada populasi tertentu. Pada struktur interaksi yang terbentuk dalam jaring-jaring makanan menunjukkan bahwa organisme dalam ekosistem saling berhubungan satu sama lain dalam suatu sistem kehidupan yang dinamis (Kwak & Park 2020). 
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar27.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.7 Jaring-jaring Makanan dalam Ekosistem
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : roboguru.ruangguru.com
+            </figcaption>
+        </figure>
+
+        <p>
+            Dalam ekosistem sawah, tanaman padi berperan sebagai produsen yang menjadi sumber makanan bagi berbagai organisme lain seperti serangga, burung, dan hewan kecil lainnya. Organisme-organisme tersebut kemudian membentuk rantai makanan dan jaring-jaring makanan yang menunjukkan adanya hubungan saling ketergantungan antara makhluk hidup. Keberadaan mikroorganisme tanah juga berperan sebagai pengurai yang membantu mengembalikan unsur hara ke dalam tanah sehingga kesuburan lahan pertanian tetap terjaga. Interaksi antarorganisme tersebut menunjukkan bahwa sistem pertanian tradisional yang berkaitan dengan Tradisi Seren Taun tidak hanya berfungsi sebagai pemenuhan kebutuhan pangan, tetapi juga mencerminkan adanya hubungan saling ketergantungan antara makhluk hidup dan lingkungannya dalam menjaga keseimbangan ekosistem sawah (Apriyana et al., 2025).
+        </p>
+
+        <hr>
+
+        <h3>c. Keseimbangan Ekosistem dan Gangguan Lingkungan</h3>
+
+        <p>
+            Stabilitas ekosistem juga dipengaruhi oleh kompleksitas interaksi yang terjadi di dalamnya. Ekosistem dengan struktur interaksi yang lebih kompleks cenderung memiliki kemampuan yang lebih baik dalam mempertahankan keseimbangannya. Hal ini terjadi karena organisme dalam ekosistem memiliki lebih dari satu hubungan dalam jaring-jaring makanan sehingga terdapat berbagai jalur aliran energi yang saling terhubung. Kondisi tersebut membuat ekosistem lebih mampu menyesuaikan diri ketika terjadi perubahan pada salah satu populasi organisme. Gangguan terhadap ekosistem dapat berupa perubahan kondisi lingkungan, kerusakan habitat, maupun aktivitas manusia yang berlebihan seperti eksploitasi sumber daya alam. Gangguan tersebut dapat memengaruhi struktur komunitas dan fungsi ekosistem secara keseluruhan sehingga berdampak pada keseimbangan lingkungan (Cui, Marsland & Mehta, 2024). 
+        </p>
+
+        <p>
+            Keseimbangan ekosistem juga dapat ditemukan dalam sistem pertanian tardisional yang berkaitan dengan Tradisi Seren Taun. Masyarakat adat berupaya menjaga keseimbangan lingkungan melalui pengelolaan lahan pertanian secara bijak, menjaga kesuburan tanah, serta memanfaatkan sumber daya alam sesuai kebutuhan agar ekosistem sawah tetap stabil. Praktik tersebut menunjukkan adanya kesadaran masyarakat dalam mengurangi kerusakan lingkungan akibat aktivitas manusia yang berlebihan. Nilai-nilai kearifan lokal yang terdapat dalam Tradisi Seren Taun mencerminkan upaya masyarakat dalam menjaga hubungan harmonis antara manusia dan alam sehingga keberlanjutan lingkungan dapat tetap terpelihara (Amalia & Haryana, 2023).
+        </p>
+
+        <hr>
+
+        <h3>d. Upaya Pelestarian Lingkungan melalui Tradisi Seren Taun</h3>
+
+        <p>
+            Interaksi antarspesies seperti predasi, kompetisi, dan simbiosis berperan dalam mengatur jumlah populasi serta menjaga kestabilan komunitas biologis dalam suatu ekosistem (Rutherford, 2018). Hubungan antarorganisme juga membentuk jaringan interaksi ekologis yang kompleks seperti rantai makanan dan jaring-jaring makanan. Jaringan hubungan tersebut memungkinkan terjadinya aliran energi dari produsen menuju konsumen hingga dekomposer sehingga fungsi ekosistem dapat berlangsung secara berkelanjutan (Heffelfinger et al., 2020). Interaksi antarorganisme juga memengaruhi proses ekologis yang lebih luas seperti siklus materi dan dinamika komunitas sehingga setiap organisme memiliki peran menjaga keseimbangan lingkungan.
+        </p>
+
+        <p>
+            Konsep hubungan antara makhluk hidup dan lingkungan tidak hanya dipahami melalui konsep ilmiah, tetapi juga tercermin dalam kehidupan masyarakat Sunda melalui berbagai praktik budaya dan tradisi lokal yang diwariskan secara turun-temurun. Salah satu tradisi yang mencerminkan hubungan tersebut adalah Seren Taun yang dilaksanakan sebagai ungkapan rasa syukur atas hasil panen padi sekaligus bentuk penghormatan masyarakat terhadap alam yang telah memberikan kehidupan (Amalia & Haryana, 2023). Tradisi Seren Taun ini menunjukkan adanya kesadaran masyarakat untuk menjaga keseimbangan antara manusia dan lingkungan demi keberlanjutan kehidupan. Nilai-nilai yang terkandung dalam Tradisi Seren Taun mencerminkan kearifan lokal masyarakat Sunda dalam membangun hubungan yang harmonis antara manusia dan alam (Triana, 2023).
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar28.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.8 Prosesi Tradisi Seren Taun
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : Kumparan.com
+            </figcaption>
+        </figure>
+
+        <p>
+            Pelaksanaan Tradisi Seren Taun berkaitan erat dengan praktik pertanian tradisional masyarakat Sunda. Dalam Tradisi Seren Taun ini, masyarakat membawa hasil panen padi untuk disimpan di lumbung padi atau leuit sebagai simbol keberlanjutan kehidupan dan ketahanan pangan masyarakat adat. Padi dipandang sebagai sumber kehidupan yang harus dihormati sehingga masyarakat menerapkan berbagai aturan dalam pengelolaan pertanian, seperti menjaga kesuburan tanah dan memanfaatkan sumber daya alam secara bijak. Praktik tersebut menunjukkan adanya nilai kearifan lokal dalam pengelolaan sumber daya alam yang diwariskan secara turun-temurun (Iskandar & Iskandar, 2016).
+        </p>
+
+        <p>
+            Tradisi Seren Taun juga mencerminkan pengetahuan lokal masyarakat dalam menjaga keseimbangan lingkungan melalui sistem pertanian tradisional. Dalam sistem tersebut, dimana tanaman padi berperan sebagai produsen yang menjadi sumber energi bagi organisme lain seperti serangga, burung, dan mikroorganisme tanah sehingga membentuk hubungan ekologis dalam ekosistem sawah (Iskandar & Iskandar, 2018). Interaksi tersebut menunjukkan bahwa praktik pertanian tradisional tidak hanya bertujuan menghasilkan pangan, tetapi juga menjaga keberlanjutan lingkungan. Kondisi tersebut mencerminkan adanya nilai kearifan lokal masyarakat dalam pengelolaan lingkungan secara berkelanjutan (Apriyana et al., 2025).
+        </p>
+
+    </div>
+
+    <!-- Tombol kembali -->
+    <button
+        onclick="buka('Materi')"
+        style="
+            position:absolute;
+            top:576px;
+            left:480px;
+            width:45px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;">
+    </button>
+
+</div>
+
+<head>
+    <style>
+
+        .isiMateri{
+            position:absolute;
+            top:170px;
+            left:494px;
+
+            width:297px;
+            height:378px;
+
+            padding:15px;
+            box-sizing:border-box;
+
+            overflow-y:auto;
+            overflow-x:hidden;
+
+            font-size:17px;
+            line-height:1.8;
+            text-align:justify;
+        }
+
+        .isiMateri h3{
+            margin-top:20px;
+            color:black;
+        }
+
+        .gambarBox{
+            margin:15px auto;
+            text-align:center;
+        }
+
+        .gambarMateri{
+            width:65%;
+            display:block;
+            margin:0 auto;
+            border-radius:10px;
+        }
+
+        .caption{
+            margin-top:5px;
+            margin-bottom:0;
+            font-size:14px;
+            font-style:italic;
+        }
+
+        .isiMateri hr{
+            margin:20px 0;
+        }
+
+    </style>
+</head>
+
+<!-- HALAMAN ROOM 2 -->
+<div id="RoomMateri2" class="halaman" style="display:none;">
+
+    <img
+        src="RoomMateri2.png"
+        class="bg">
+
+    <!-- Isi Materi -->
+    <div class="isiMateri">
+
+        <p>
+           Perubahan zat merupakan proses ketika suatu zat mengalami perubahan sifat, bentuk, maupun susunannya. Dalam kehidupan sehari-hari, perubahan zat dapat terjadi secara alami maupun akibat aktivitas manusia sehingga memberikan dampak terhadap lingkungan sekitar. Secara umum, perubahan zat dibedakan menjadi perubahan fisika yang tidak menghasilkan zat baru dan perubahan kimia yang menghasilkan zat baru dengan sifat berbeda dari zat semula (Wandini et al., 2022). Perbedaan kedua jenis perubahan tersebut menjadi konsep dasar yang penting dipahami dalam pembelajaran IPA karena berkaitan dengan berbagai fenomena yang terjadi di lingkungan sekitar peserta didik.
+        </p>
+
+        <p>
+            Konsep perubahan zat dapat dikaitkan dengan sistem pertanian tradisional masyarakat Sunda yang berkaitan dengan Tradisi Seren Taun, khususnya dalam proses penanaman hingga pengolahan padi. Pada proses pertanian tersebut, padi mengalami berbagai perubahan akibat pengaruh air, cahaya matahari, dan unsur hara selama masa pertumbuhan. Setelah dipanen, terdapat perubahan fisika seperti penjemuran padi yang tidak menghasilkan zat baru serta perubahan pada proses pemasakan beras yang menyebabkan perubahan sifat bahan pangan (Florentina et al., 2016). Kegiatan tersebut menunjukkan bahwa konsep perubahan zat tidak hanya dipelajari secara ilmiah, tetapi juga tercermin dalam praktik pertanian dan budaya masyarakat Sunda.
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar26.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.9. Perubahan Lingkungan
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : www.quipper.com
+            </figcaption>
+        </figure>
+
+        <p>
+            Perubahan fisika seperti mencair, membeku, menguap, dan mengembun berkaitan dengan perubahan wujud zat yang banyak dijumpai dalam kehidupan sehari-hari. Proses tersebut berperan dalam siklus air yang memengaruhi kelembapan udara, curah hujan, serta ketersediaan air bagi kegiatan pertanian. Dalam masyarakat Sunda, kondisi alam dan ketersediaan air menjadi faktor penting dalam proses penanaman padi yang berkaitan dengan Tradisi Seren Taun. Tradisi Seren Taun dilaksanakan sebagai bentuk rasa syukur atas hasil panen yang diperoleh melalui proses pertanian yang bergantung pada keseimbangan kondisi lingkungan. Melalui pemahaman mengenai perubahan wujud zat dan siklus air, peserta didik dapat memahami keterkaitan antara konsep sains dengan praktik budaya masyarakat di lingkungan sekitar (Ramadhani et al., 2023).
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar210.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.10. Siklus Air
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : geograpik.blogspot.com
+            </figcaption>
+        </figure>
+
+        <p>
+            Perubahan kimia juga dapat dikaitkan dengan sistem pertanian tradisional yang mendukung pelaksanaan Tradisi Seren Taun. Dalam kegiatan pertanian, perubahan kimia terjadi pada proses penguraian bahan organik di tanah yang membantu meningkatkan kesuburan tanah bagi pertumbuhan tanaman padi (Sianturi, Fauzi & Damanik, 2018). Selain itu, perubahan kimia juga terjadi pada proses pengolahan hasil panen padi yang menyebabkan perubahan sifat bahan pangan. Kesuburan tanah dan keberhasilan panen menjadi hal penting dalam Tradisi Seren Taun karena padi dipandang sebagai sumber kehidupan masyarakat. Kondisi tersebut menunjukkan bahwa konsep perubahan kimia tidak hanya dipelajari secara ilmiah, tetapi juga berkaitan dengan praktik pertanian dan budaya masyarakat Sunda.
+        </p>
+
+        <h3>a.	Dampak Perubahan Zat terhadap Lingkungan</h3>
+
+        <p>
+            Perubahan zat, baik perubahan fisika maupun perubahan kimia dapat memberikan dampak terhadap kondisi lingkungan. Salah satu dampaknya terlihat pada pencemaran udara akibat proses pembakaran kendaraan, industri, maupun sampah yang menghasilkan berbagai gas pencemaran sehingga menurunkan kualitas lingkungan (Arifin & Rahman, 2024). Kondisi lingkungan yang tercemar dapat memengaruhi kegiatan pertanian yang menjadi sumber kehidupan masyarakat agraris, termasuk masyarakat Sunda dalam pelaksanaan Tradisi Seren Taun. Selain itu, limbah rumah tangga, pertanian, dan industri juga dapat menyebablan perubahan zat di perairan yang memicu eutrofikasi akibat meningkatnya kadar nitrat dan fosfat didalam air (Adawiah et al, 2021). Kondisi tersebut dapat menganggu keseimbangan ekosistem perairan serta memengaruhi kualitas lingkungan sekitarnya.
+        </p>
+
+        <p>
+            Kandungan nitrat dan fosfat yang tingga juga berpengaruh terhadap kelimpahan fitoplankton yang menjadi indikator kesuburan sekaligus kualitas perairan (Nuryani & Sari, 2023). Selain itu, aktivitas manusia di sekitar perairan dapat meningkatkan kandungan nutrien seperti nitrogen dan fosfor yang memengaruhi status trofik perairan serta memicu terjadinya eutrofikasi (Aryani et al., 2021). Kondisi eutrofikasi dapat menyebabkan pertumbuhan alga secara berlebihan sehingga mengurangi kadar oksigen terlarut di dalam air. Penurunan kadar oksigen tersebut dapat menganggu kehidupan organisme perairan dan merusak keseimbangan ekosistem. Dampak tersebut menunjukkan bahwa perubahan zat di lingkungan perairan perlu dikelola dengan baik agar kualitas lingkungan tetap terjaga.
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar211.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.11. Proses Eutrofikasi di Perairan
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : tekniksipil.id
+            </figcaption>
+        </figure>
+
+        <p>
+            Perubahan zat juga memengaruhi kondisi tanah yang menjadi media utama pertumbuhan tanaman padi dalam sistem pertanian masyarakat Sunda. Penggunaan pupul kimia dan pestisida secara berlebihan dapat menurunkan kesuburan tanah serta mengganggu keseimbangan lingkungan. Sebaliknya, beberapa perubahan zat memberikan dampak positif, seperti proses pengomposan yang mengubah sampah organik menjadi kompos untuk meningkatkan kesuburan tanah (Manahan, 2000). Pengelolaan perubahan zat yang baik menjadi penting untuk menjaga kualitas lingkungan dan mendukung keberlanjutan pertanian yang berkaitan dengan Tradisi Seren Taun. Pemahaman mengenai dampak perubahan zat membantu peserta didik memahami hubungan antara konsep sains, lingkungan, dan kehidupan masyarakat (Kaza, Bhada-Tata & Woerden, 2018).
+        </p>
+
+        <hr>
+
+    </div>
+
+    <!-- Tombol kembali -->
+    <button
+        onclick="buka('Materi')"
+        style="
+            position:absolute;
+            top:576px;
+            left:480px;
+            width:45px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;">
+    </button>
+
+</div>
+
+<head>
+    <style>
+
+        .isiMateri{
+            position:absolute;
+            top:190px;
+            left:494px;
+
+            width:297px;
+            height:378px;
+
+            padding:15px;
+            box-sizing:border-box;
+
+            overflow-y:auto;
+            overflow-x:hidden;
+
+            font-size:17px;
+            line-height:1.8;
+            text-align:justify;
+        }
+
+        .isiMateri h3{
+            margin-top:20px;
+            color:black;
+        }
+
+        .gambarBox{
+            margin:15px auto;
+            text-align:center;
+        }
+
+        .gambarMateri{
+            width:65%;
+            display:block;
+            margin:0 auto;
+            border-radius:10px;
+        }
+
+        .caption{
+            margin-top:5px;
+            margin-bottom:0;
+            font-size:14px;
+            font-style:italic;
+        }
+
+        .isiMateri hr{
+            margin:20px 0;
+        }
+
+    </style>
+</head>
+
+<!-- HALAMAN ROOM 3 -->
+<div id="RoomMateri3" class="halaman" style="display:none;">
+
+    <img
+        src="RoomMateri3.png"
+        class="bg">
+
+    <!-- Isi Materi -->
+    <div class="isiMateri">
+
+        <p>
+            Perubahan iklim merupakan salah satu dampak dari perubahan zat yang terjadi di lingkungan, terutama perubahan zat yang berkaitan dengan komposisi gas di atmosfer. Berbagai aktivitas manusia menyebabkan terjadinya perubahan zat melalui proses fisika maupun reaksi kimia yang menghasilkan gas rumah kaca dan memengaruhi keseimbangan sistem bumi (Manahan, 2000). Salah satu contoh utamanya adalah proses pembakaran bahan bakar fosil seperti batu bara, minyak bumi, dan gas alam yang menghasilkan karbon dioksida sebagai zat baru. Peningkatan kadar karbon dioksida di atmosfer menyebabkan panas matahari terperangkap di bumi sehingga memicu efek rumah kaca dan meningkatkan suhu rata-rata bumi (IPCC, 2021; Arrhenius, 1896).
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar212.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.12. Faktor Penyebab Perubahan Iklim dan Dampaknya
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : umsu.ac.id
+            </figcaption>
+        </figure>
+
+        <p>
+            Perubahan iklim memberikan dampak terhadap berbagai aspek kehidupan, termasuk kegiatan pertanian masyarakat yang berkaitan dengan Tradisi Seren Taun. Perubahan pola curah hujan, peningkatan suhu, serta perubahan musim dapat memengaruhi pertumbuhan tanaman padi dan hasil panen masyarakat (IPCC, 2021). Kondisi tersebut menunjukkan bahwa keseimbangan lingkungan sangat penting bagi keberlanjutan sistem pertanian tradisional masyarakat Sunda. Oleh karena itu, pemahaman mengenai perubahan iklim membantu peserta didik memahami hubungan antara aktivitas manusia, perubahan zat, dan dampaknya terhadap kehidupan serta lingkungan sekitar (Nurhayati et al., 2023).
+        </p>
+
+        <p>
+            Selain karbon dioksida, perubahan zat di lingkungan juga menghasilkan gas rumah kaca lain, seperti metana dan dinitrogen oksida. Metana dihasilkan dari proses pembusukan bahan organik, aktivitas peternakan, dan pengelolaan sampah, sedangkan dinitrogen oksida berasal dari penggunaan pupuk nitrogen di bidang pertanian. Peningkatan konsentrasi gas-gas tersebut di atmosfer dapat memperkuat efek rumah kaca dan mempercepat terjadinya perubahan iklim. Selain itu, reaksi kimia di atmosfer juga menghasilkan zat lain yang dapat memengaruhi kualitas udara serta keseimbangan energi di atmosfer (Chang, 2010).
+        </p>
+
+        <p>
+            Perubahan zat tidak hanya terjadi di udara, tetapi juga berlangsung di perairan dan tanah. Laut dapat menyerap karbon dioksida dari atmosfer sehingga menyebabkan pengasaman laut yang menganggu keseimbangan ekosistem perairan. Perubahan kondisi lingkungan tersebut pada akhirnya berdampak terhadap berbagai aspek kehidupan manusia, termasuk sektor pertanian. Kondisi ini menunjukkan pentingnya menjaga keseimbangan lingkungan sebagaimana tercermin dalam nilai-nilai kearifan lokal masyarakat Sunda melalui Tradisi Seren Taun yang mengajarlan penghormatan terhadap alam dan pemanfaatan sumber daya secara bijak.
+        </p>
+
+        <p>
+            a. Pembakaran Bahan Bakar Fosil
+        </p>
+
+        <p>
+            Pembakaran batu bara, minyak bumi, dan gas alam untuk pembangkit listrik, transportasi, dan industri merupakan penyumbang utama gas rumah kaca, terutama karbon dioksida. Proses pembakaran ini merupakan perubahan kimia yang menghasilkan zat-zat baru berupa gas yang terlepas ke atmosfer. Peningkatan konsentrasi karbon dioksida menyebabkan semakin banyak panas yang terperangkap di atmosfer, sehingga meningkatkan suhu bumi. Kondisi tersebut dapat memengaruhi keseimbangan lingkungan dan berdampak pada sektor pertanian, termasuk proses penanaman padi yang berkaitan dengan Tradisi Seren Taun masyarakat Sunda. Hal ini menunjukkan pentingnya menjaga lingkungan dan memanfaatkan sumber daya alam secara bijak sebagaimana tercermin dalam nilai-nilai Tradisi Seren Taun.
+        </p>
+
+        <p>
+            b. Deforestasi dan Perubahan Penggunaan Lahan
+        </p>
+
+        <p>
+            Penebangan hutan dan alih fungsi lahan menjadi permukiman, industri, atau pertanian menyebabkan berkurangnya jumlah tumbuhan yang mampu menyerap karbon dioksida melalui fotosintesis. Selain itu, pembakaran hutan juga menghasilkan karbon dioksida dalam jumlah besar sehingga meningkatkan konsentrasi gas rumah kaca di atmosfer. Perubahan zat yang terjadi selama proses pembakaran biomassa tersebut berkontribusi terhadap terjadinya perubahan iklim dan kerusakan lingkungan. Kondisi tersebut dapat memengaruhi keseimbangan ekosistem serta kegiatan pertanian masyarakat yang berkaitan dengan Tradisi Seren Taun. Hal ini menunjukkan pentingnya menjaga kelestarian lingkungan dan memanfaatkan sumber daya alam secara bijak.
+        </p>
+
+        <p>
+            c. Aktivitas Pertanian dan Peternakan
+        </p>
+
+        <p>
+            Kegiatan pertanian dan peternakan menghasilkan gas rumah kaca seperti metana dan dinitrogen oksida. Metana dihasilkan dari proses pencernaan hewan ternak dan pembusukan bahan organik, sedangkan dinitrogen oksida berasal dari penggunaan pupuk nitrogen. Perubahan zat dalam proses tersebut meningkatkan konsentrasi gas rumah kaca di atmosfer sehingga dapat memengaruhi keseimbangan lingkungan dan kondisi iklim. Dampak tersebut juga berpengaruh terhadap kegiatan pertanian masyarakat yang berkaitan dengan Tradisi Seren Taun, terutama pada proses pertumbuhan tanaman padi dan hasil panen. Oleh karena itu, pengelolaan pertanian yang bijak menjadi penting untuk menjaga keberlanjutan lingkungan.
+        </p>
+
+        <p>
+            d. Aktivitas Industri
+        </p>
+
+        <p>
+            Berbagai proses industri melibatkan reaksi kimia yang menghasilkan gas-gas rumah kaca dan zat pencemar lainnya. Produksi semen, baja, dan bahan kimia tertentu menghasilkan emisi karbon dioksida dalam jumlah besar. Selain itu, penggunaan bahan pendingin tertentu juga dapat melepaskan gas yang memiliki potensi pemanasan global tinggi. Peningkatan emisi tersebut dapat memengaruhi keseimbangan lingkungan dan mempercepat terjadinya perubahan iklim. Kondisi lingkungan yang berubah dapat berdampak pada sektor pertanian masyarakat, termasuk sistem pertanian tradisional.
+        </p>
+
+        <p>
+            e. Pengelolaan Sampah dan Limbah
+        </p>
+
+        <p>
+            Tempat pembuangan sampah menghasilkan gas metana akibat pembusukan sampah organik secara anaerob. Limbah cair dan padat yang tidak dikelola dengan baik juga dapat melepaskan gas rumah kaca dan mencemari lingkungan. Perubahan zat dalam proses pembusukan ini turut mempercepat terjadinya perubahan iklim. Kondisi lingkungan yang tercemar dapat memengaruhi keseimbangan ekosistem dan kegiatan pertanian masyarakat.
+        </p>
+
+        <p>
+            f. Faktor Alami
+        </p>
+
+        <p>
+            Selain faktor manusia, perubahan iklim juga dipengaruhi oleh faktor alami, seperti aktivitas gunung berapi, variasi aktivitas matahari, dan fenomena alam tertentu. Letusan gunung berapi dapat melepaskan gas dan partikel ke atmosfer yang memengaruhi suhu dan iklim dalam jangka waktu tertentu. Namun, dalam jangka panjang, kontribusi faktor alami terhadap perubahan iklim modern relatif lebih kecil dibandingkan dengan aktivitas manusia. Berbagai upaya mitigasi perubahan iklim saat ini lebih difokuskan pada penguranfan emisi gas rumah kaca yang berasal dari aktivitas manusia.
+        </p>
+
+        <p>
+            g. Perubahan Komposisi Atomosfer
+        </p>
+
+        <p>
+            Berbagai aktivitas manusia, seperti pembakaran bahan bakar fosil, deforestasi, dan kegiatan industri yang dapat menghasilkan emisi gas yang dilapiskan ke atmosfer. Aktivitas tersebut menyebabkan gas rumah kaca. Perybahan zat di atmosfer, terutama peningkatan konsentrasi gas rumah kaca. Perubahan zat inilah yang menganggu keseimbangan energi bumi dan menjadi penyebab utama terjadinya perubahan iklim. Akibat dari hal tersebut, berbagai fenomena lingkungan seperti peningkatan suhu global, perubahan pola cuaca, dan kenaikan permukaan laut semakin sering terjadi.
+        </p>
+
+    </div>
+
+    <!-- Tombol kembali -->
+    <button
+        onclick="buka('Materi')"
+        style="
+            position:absolute;
+            top:576px;
+            left:480px;
+            width:45px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;">
+    </button>
+
+</div>
+
+<head>
+    <style>
+
+        .isiMateri{
+            position:absolute;
+            top:190px;
+            left:494px;
+
+            width:297px;
+            height:378px;
+
+            padding:15px;
+            box-sizing:border-box;
+
+            overflow-y:auto;
+            overflow-x:hidden;
+
+            font-size:17px;
+            line-height:1.8;
+            text-align:justify;
+        }
+
+        .isiMateri h3{
+            margin-top:20px;
+            color:black;
+        }
+
+        .gambarBox{
+            margin:15px auto;
+            text-align:center;
+        }
+
+        .gambarMateri{
+            width:65%;
+            display:block;
+            margin:0 auto;
+            border-radius:10px;
+        }
+
+        .caption{
+            margin-top:5px;
+            margin-bottom:0;
+            font-size:14px;
+            font-style:italic;
+        }
+
+        .isiMateri hr{
+            margin:20px 0;
+        }
+
+    </style>
+</head>
+
+<!-- HALAMAN ROOM 4 -->
+<div id="RoomMateri4" class="halaman" style="display:none;">
+
+    <img
+        src="RoomMateri4.png"
+        class="bg">
+
+    <!-- Isi Materi -->
+    <div class="isiMateri">
+
+        <p>
+            Tradisi Seren Taun merupakan salah satu warisan budaya agraris masyarakat Sunda yang masih dilestarikan hingga saat ini, terutama di wilayah Jawa Barat dan Banten seperti Cigugur, Sindang Barang, Ciptagelar, Citorek, Cisungsang, dan Purwabakti. Tradisi ini merupakan bentuk ungkapan rasa syukur kepada Tuhan Yang Maha Esa atas hasil panen padi yang telah diperoleh, sekaligus doa untuk kesejahteraan, kesuburan, dan keberkahan pada tahun berikutnya. Seren Taun tidak hanya berfungsi sebagai kegiatan seremonial, tetapi juga memiliki dimensi sosial, religius, dan ekologis yang kuat. Secara etimologis, istilah Seren Taun berasal dari kata seren yang berarti menyerahkan dan taun yang berarti tahun, sehingga dimaknai sebagai penyerahan hasil panen sebagai simbol keberlanjutan kehidupan dan siklus alam (Ferescky, Safitri & Sujarwo, 2024). Melalui Tradisi Seren Taun ini, masyarakat diajarkan untuk menjaga hubungan harmonis antara manusia dan alam serta menanamkan nilai tanggung jawab terhadap kelestarian lingkungan.
+        </p>
+
+        <p>
+            Tradisi Seren Taun telah ada sejak masa Kerajaan Pajajaran ketika masyarakat Sunda masih mempercayai Dewi Sri atau Nyi Pohaci Sanghyang Asri sebagai simbol kesuburan dan pelindung tanaman padi. Tradisi ini mencerminkan hubungan spiritual masyarakat dengan alam, khususnya dalam sistem pertanian tradisional yang bergantung pada keseimbangan ekosistem. Selain itu, berbagai simbol seperti leuit (lumbung padi), indung pare, serta penggunaan alat musik tradisional mencerminkan harmoni antara manusia dan alam. Hal tersebut menunjukkan bahwa Seren Taun tidak hanya memiliki makna budaya, tetapi juga mengandung nilai ekologis dan edukatif yang penting (Suryati, 2018). Masyarakat adat memiliki pengetahuan lokal dalam pengelolaan lahan pertanian, konservasi tanah, serta pemanfaatan sumber daya alam yang diwariskan secara turun-temurun. Pengetahuan ini mencerminkan bentuk kearifan lokal dalam menjaga keseimbangan lingkungan melalui praktik yang berkelanjutan.
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar21.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.1. Seren Taun : Upacara Adat Panen Masyarakat Sunda
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : infobudaya.net
+            </figcaption>
+        </figure>
+
+        <p>
+            Seiring dengan masuknya agama Islam ke wilayah Sunda, Tradisi Seren Taun mengalami proses akulturasi budaya, dimana unsur-unsur pemujaan kemudian berubah menjadi kegiatan doa bersama, pengajian, dan sedekah bumi tanpa menghilangkan makna utama sebagai ungkapan rasa syukur kepada Tuhan. Proses akulturasi tersebut menunjukkah bahwa Seren Taun memiliki sifat adaptif dan mampu berkembang mengikuti nilai sosial dan religius masyarakat tanpa kehilangan esensi ekologisnya. Hal tersebut juga menunjukkan bahwa Tradisi lokal dapat bertahan dan tetap relevan dalam kehidupan masyarakat modern (Indriani & Al-Faqih, 2020). Kemampuan beradaptasi tersebut menjadikan Seren Taun tidak hanya berfungsi sebagai warisan budaya, tetapi juga sebagai pewarisan nilai-nilai sosial, spiritual, dan lingkungan kepada generasi berikutnya.
+        </p>
+
+        <p>
+            Filosofi Seren Taun berakar pada prinsip keseimbangan antara manusia, alam, dan sang cipta. Prinsip hidup masyarakat Sunda seperti silih asih, silih asah, dan silih asuh mencerminkan nilai saling peduli, saling membimbing, dan saling menjaga baik dalam kehidupan sosial maupun dalam menjaga kelestarian lingkungan (Putri & Nurhayati, 2025). Nilai-nilai tersebut menjadi landasan dalam kehidupan masyarakat Sunda untuk menjaga hubungan harmonis antara manusia dan alam. Selain itu, semboyan mupusti pare lain migusti menunjukkan bahwa masyarakat menghormati padi sebagai sumber kehidupan tanpa menempatkannya sebagai objek pemujaan. Nilai ini mengajarkan bahwa manusia memiliki tanggung jawab moral untuk memanfaatkan sumber daya alam secara bijaksana tanpa merusak keseimbangan ekosistem, tradisi Seren Taun dapat dipandang sebagai bentuk pengetahuan ekologis masyarakat lokal yang berkembang melalui pengalaman panjang dalam berinteraksi dengan lingkungan alam (Iskandar & Iskandar, 2018).
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar22.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.2. Memainkan Musik Angklung dan Dogdog Lojor untuk Nyai Pohaci Sehari sebelum Arak-Arakan
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : Kompas.id
+            </figcaption>
+        </figure>
+
+        <p>
+            Berbagai simbol dalam Tradisi Seren Taun juga memiliki makna ekologis dan edukatif, seperti leuit (lumbung padi) yang melambangkan ketahanan pangan, indung pare yang melambangkan sumber kehidupan, serta penggunaan alat musik tradisional seperti angklung dan dogdog lojor yang mencerminkan harmoni antara manusia dan alam. Simbol-simbol tersebut tidak hanya memiliki fungsi budaya, tetapi juga berperan sebagai sarana pendidikan lingkungan yang mengajarkan pentingnya menjaga keberlanjutan sumber daya alam (Rini, 2025). Selain itu, Seren Taun juga memiliki makna sosial, budaya, dan spiritual yang mencerminkan pandangan hidup masyarakat Sunda dalam menjaga hubungan harmonis antara manusia, alam, dan Tuhan. Nilai-nilai tersebut sangat relevan untuk diintegrasikan dalam pembelajaran IPA, khususnya dalam membangun karakter peduli lingkungan dan tanggung jawab ekologis peserta didik. Masyarakat adat seperti Kasepuhan Ciptagelar juga mempertahankan prinsip leuweung hejo, cai herang, taneuh subur, rakyat makmur, yang menggambarkan hubungan erat antara kelestarian lingkungan dan kesejahteraan manusia (Prabowo & Sudrajat, 2021). 
+        </p>
+
+        <figure class="gambarBox">
+            <img src="gambar22.jpeg" class="gambarMateri">
+            <figcaption class="caption">
+                Gambar 2.3. Seni Dog-Dog Lojor pada Rangkaian Acara Seren Taun
+            </figcaption>
+            <figcaption class="caption">
+                Sumber : ANTARAFOTO
+            </figcaption>
+        </figure>
+    </div>
+
+    <!-- Tombol kembali -->
+    <button
+        onclick="buka('Materi')"
+        style="
+            position:absolute;
+            top:576px;
+            left:480px;
+            width:45px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;">
+    </button>
+
+</div>
+
+<head>
+    <style>
+
+        .isiMateri{
+            position:absolute;
+            top:190px;
+            left:494px;
+
+            width:297px;
+            height:378px;
+
+            padding:15px;
+            box-sizing:border-box;
+
+            overflow-y:auto;
+            overflow-x:hidden;
+
+            font-size:17px;
+            line-height:1.8;
+            text-align:justify;
+        }
+
+        .isiMateri h3{
+            margin-top:20px;
+            color:black;
+        }
+
+        .gambarBox{
+            margin:15px auto;
+            text-align:center;
+        }
+
+        .gambarMateri{
+            width:65%;
+            display:block;
+            margin:0 auto;
+            border-radius:10px;
+        }
+
+        .caption{
+            margin-top:5px;
+            margin-bottom:0;
+            font-size:14px;
+            font-style:italic;
+        }
+
+        .isiMateri hr{
+            margin:20px 0;
+        }
+
+    </style>
+</head>
+
+<!-- HALAMAN PENGEMBANG -->
+<div id="Pengembang" class="halaman" style="display:none;">
+
+    <img
+        src="Pengembang.png"
+        class="bg">
+
+    <!-- Tombol kembali -->
+    <button
+        onclick="buka('menuInformasi')"
+        style="
+            position:absolute;
+            top:592px;
+            left:430px;
+            width:45px;
+            height:40px;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            z-index:9999;">
+    </button>
+
+</div>
+
+</div>
+
+</body>
+</html>

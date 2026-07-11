@@ -4198,15 +4198,20 @@ function resizeGame(){
     const designWidth = 1280;
     const designHeight = 720;
 
+    // Sisakan ruang 5% di setiap sisi
+    const padding = 0.95;
+
     const scale = Math.min(
-        window.innerWidth/designWidth,
-        window.innerHeight/designHeight
+        (window.innerWidth * padding) / designWidth,
+        (window.innerHeight * padding) / designHeight
     );
 
-    document.querySelectorAll(".halaman").forEach(halaman=>{
+    document.querySelectorAll(".halaman").forEach(halaman => {
 
+        halaman.style.left = "50%";
+        halaman.style.top = "50%";
         halaman.style.transform =
-            `translate(-50%,-50%) scale(${scale})`;
+            `translate(-50%, -50%) scale(${scale})`;
 
     });
 

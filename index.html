@@ -50,6 +50,26 @@ button{
     background:transparent;
     cursor:pointer;
 }
+
+.bg,
+.halaman > img{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    z-index:0;
+}
+
+.halaman button,
+.halaman input,
+.halaman textarea,
+.halaman select,
+.halaman div{
+    position:absolute;
+    z-index:9999;
+}
 </style>
 </head>
 
@@ -3438,7 +3458,8 @@ function tombolKembaliPetunjuk(){
             height:80px;
             background:transparent;
             border:none;
-            cursor:pointer;">
+            cursor:pointer;"
+            z-index:9999;">
     </button>
 
     <!-- ROOM 2 -->
@@ -3452,7 +3473,8 @@ function tombolKembaliPetunjuk(){
             height:80px;
             background:transparent;
             border:none;
-            cursor:pointer;">
+            cursor:pointer;"
+            z-index:9999;">
     </button>
 
     <!-- ROOM 3 -->
@@ -3466,7 +3488,8 @@ function tombolKembaliPetunjuk(){
             height:80px;
             background:transparent;
             border:none;
-            cursor:pointer;">
+            cursor:pointer;"
+            z-index:9999;">
     </button>
 
     <!-- ROOM 4 -->
@@ -3480,7 +3503,8 @@ function tombolKembaliPetunjuk(){
             height:80px;
             background:transparent;
             border:none;
-            cursor:pointer;">
+            cursor:pointer;"
+            z-index:9999;">
     </button>
 
     <!-- Tombol kembali -->

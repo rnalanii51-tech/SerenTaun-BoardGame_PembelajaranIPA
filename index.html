@@ -9,7 +9,14 @@
 *{
     margin:0;
     padding:0;
-    box-sizing:border-box;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
 body{
@@ -21,12 +28,9 @@ body{
 /* Semua halaman */
 .halaman{
     position:absolute;
+    inset:0;
     width:1280px;
     height:720px;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    overflow:hidden;
     display:none;
 }
 
@@ -36,13 +40,10 @@ body{
 }
 
 /* Gambar halaman */
-.bg{
-    position:absolute;
-    left:0;
-    top:0;
-    width:1280px;
-    height:720px;
-    object-fit:fill;
+.halaman img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
 }
 
 /* Tombol */
@@ -63,20 +64,23 @@ button{
 
     <!-- MASUK KELAS -->
     <button
-    style="width:200px;height:50px;top:53%;left:50%;transform:translateX(-50%);"
-    onclick="buka('masukkelas')">
+        type="button"
+        style="width:200px;height:50px;top:53%;left:50%;transform:translateX(-50%);"
+        onclick="buka('masukkelas')">
     </button>
 
     <!-- GURU MEMBUAT ROOM -->
     <button
-    onclick="buka('panel_guru')"
-    style="width:200px;height:50px;top:63%;left:50%;transform:translateX(-50%);">
+        type="button"
+        onclick="buka('panel_guru')"
+        style="width:200px;height:50px;top:63%;left:50%;transform:translateX(-50%);">
     </button>
 
     <!-- PETUNJUK PENGGUNAAN-->
     <button
-    style="width:200px;height:50px;top:73%;left:50%;transform:translateX(-50%);"
-    onclick="buka('petunjuk_penggunaan')">
+        type="button"
+        style="width:200px;height:50px;top:73%;left:50%;transform:translateX(-50%);"
+        onclick="buka('petunjuk_penggunaan')">
     </button>
 </div>
 
@@ -4190,37 +4194,6 @@ function tombolKembaliMateri(){
     </button>
 
 </div>
-
-<script>
-
-function resizeGame(){
-
-    const designWidth = 1280;
-    const designHeight = 720;
-
-    // Sisakan ruang 5% di setiap sisi
-    const padding = 0.95;
-
-    const scale = Math.min(
-        (window.innerWidth * padding) / designWidth,
-        (window.innerHeight * padding) / designHeight
-    );
-
-    document.querySelectorAll(".halaman").forEach(halaman => {
-
-        halaman.style.left = "50%";
-        halaman.style.top = "50%";
-        halaman.style.transform =
-            `translate(-50%, -50%) scale(${scale})`;
-
-    });
-
-}
-
-window.addEventListener("load",resizeGame);
-window.addEventListener("resize",resizeGame);
-
-</script>
 
 </body>
 </html>
